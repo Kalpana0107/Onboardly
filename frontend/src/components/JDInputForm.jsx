@@ -7,26 +7,36 @@ import api from '../api/config';
 function JDInputForm({ candidateId, onScoreReceived }) {
   const [jdText, setJdText] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async () => {
-    // Don't send empty text
-    if (!jdText.trim()) return;
-
+    // Guard: check candidateId before doing anything
+    if (!candidateId) {
+      setError('Please upload a resume first before calculating match score.');
+      return;
+    }
+    if (!jdText.trim()) {
+      setError('Please paste a job description.');
+      return;
+    }
+    
     setLoading(true);
+    setError('');
 
+    // Step 3 log
+    console.log('Step 3 - matching with candidateId:', candidateId, 'JD length:', jdText.length);
+    
     try {
       const res = await api.post('/api/match', {
-        // Which resume to score
-        candidateId,
-
-        // The JD pasted by the recruiter
-        jobDescription: jdText,
+        candidateId: candidateId,
+        jobDescription: jdText
       });
-
-      // Pass the score up to the parent page
       onScoreReceived(res.data.score, res.data.matchedSkills);
     } catch (err) {
-      console.error('Scoring failed:', err);
+      // Show the actual error from backend
+      const msg = err.response?.data?.error || 
+                  'Scoring failed. Try extracting skills first.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -50,9 +60,16 @@ function JDInputForm({ candidateId, onScoreReceived }) {
         }}
       />
 
+      {error && (
+        <p style={{color: '#ef4444', fontSize: '13px', 
+                   marginTop: '8px'}}>
+          ⚠ {error}
+        </p>
+      )}
+
       <button
         onClick={handleSubmit}
-        disabled={loading || !jdText.trim()}
+        disabled={loading || !jdText.trim() || !candidateId}
         style={{
           background: '#00D4AA',
           color: '#000000',
@@ -60,7 +77,8 @@ function JDInputForm({ candidateId, onScoreReceived }) {
           padding: '10px 20px',
           fontWeight: '600',
           border: 'none',
-          cursor: 'pointer'
+          cursor: 'pointer',
+          opacity: (!candidateId || !jdText.trim()) ? 0.5 : 1
         }}
       >
         {loading ? 'Calculating...' : 'Calculate Match Score'}

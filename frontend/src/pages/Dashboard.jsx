@@ -13,6 +13,12 @@ function Dashboard() {
   const [matchedSkills, setMatchedSkills] = useState([]);
   const [refreshList, setRefreshList] = useState(0);
 
+  const handleUploadSuccess = (data) => {
+    console.log('Upload success, candidateId:', data.candidateId);
+    console.log('Step 1 complete - candidateId set to:', data.candidateId);
+    setActiveCandidateId(data.candidateId);
+  };
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -79,18 +85,21 @@ function Dashboard() {
             📄 Upload Resume
           </h2>
           <FileUpload
-            onUploadSuccess={(data) => {
-              setActiveCandidateId(data.candidateId);
-            }}
+            onUploadSuccess={handleUploadSuccess}
           />
           {activeCandidateId && (
-            <div style={{ marginTop: '20px' }}>
-              <SkillBadges
-                candidateId={activeCandidateId}
-                onSkillsExtracted={() => {}}
-              />
-            </div>
+            <p style={{color: '#00D4AA', fontSize: '13px', 
+                       marginTop: '8px'}}>
+              ✅ Resume uploaded (ID: {activeCandidateId})
+              — now extract skills then calculate score
+            </p>
           )}
+          <div style={{ marginTop: '20px' }}>
+            <SkillBadges
+              candidateId={activeCandidateId}
+              onSkillsExtracted={() => {}}
+            />
+          </div>
         </div>
 
         {/* PANEL 2 — Job Description */}

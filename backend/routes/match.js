@@ -16,29 +16,37 @@ const extractKeywords = (text) => {
         .filter(word => word.length > 2 && !stopWords.has(word));
 
 };
-router.post("/:candidateId", (req, res) => {
+router.post('/match', async (req, res) => {
+  const { candidateId, jobDescription } = req.body;
+  
+  // Better error messages
+  if (!candidateId) {
+    return res.status(400).json({ 
+      error: 'candidateId is required. Upload a resume first.' 
+    });
+  }
+  if (!jobDescription || !jobDescription.trim()) {
+    return res.status(400).json({ 
+      error: 'jobDescription is required.' 
+    });
+  }
 
-    const { candidateId } = req.params;
-    const { jobDescription } = req.body;
-
+  try {
     const candidate = db
         .prepare("SELECT * FROM candidates WHERE id = ?")
         .get(candidateId);
 
     if (!candidate || !candidate.skills) {
         return res.status(400).json({
-            error: " Extract skills first(run Day 3 step)"
+            error: "Extract skills first (run Day 3 step)"
         });
     }
     const resumeSkills = JSON.parse(candidate.skills);
 
     const jobKeywords = extractKeywords(jobDescription);
 
-
-
     const matchedSkills = resumeSkills.filter(skill =>
         jobKeywords.includes(skill.toLowerCase())
-
     );
 
     const matchScore =
@@ -52,10 +60,11 @@ router.post("/:candidateId", (req, res) => {
     res.json({
         candidateId,
         matchedSkills,
-        matchScore
+        score: matchScore
     });
-
-
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 module.exports = router;
