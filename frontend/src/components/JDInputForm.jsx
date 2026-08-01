@@ -15,16 +15,12 @@ function JDInputForm({ candidateId, onScoreReceived }) {
     setLoading(true);
 
     try {
-      const res = await api.post('/api/match', {
-        // Which resume to score
-        candidateId,
-
-        // The JD pasted by the recruiter
-        jobDescription: jdText,
-      });
+      const res = await api.post(`/api/match/${candidateId}`, {
+  jobDescription: jdText,
+});
 
       // Pass the score up to the parent page
-      onScoreReceived(res.data.score, res.data.matchedSkills);
+     onScoreReceived(res.data.matchScore, res.data.matchedSkills);
     } catch (err) {
       console.error('Scoring failed:', err);
     } finally {
