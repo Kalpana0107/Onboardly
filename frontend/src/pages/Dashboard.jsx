@@ -80,8 +80,11 @@ function Dashboard() {
           </h2>
           <FileUpload
             onUploadSuccess={(data) => {
-              setActiveCandidateId(data.candidateId);
-            }}
+    console.log("Dashboard got:", data);
+    console.log("Candidate ID:", data.candidateId);
+
+    setActiveCandidateId(data.candidateId);
+}}
           />
           {activeCandidateId && (
             <div style={{ marginTop: '20px' }}>
