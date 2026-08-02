@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/config';
 import FileUpload from '../components/FileUpload';
 import SkillBadges from '../components/SkillBadges';
 import JDInputForm from '../components/JDInputForm';
@@ -9,14 +10,21 @@ import CandidateList from '../components/CandidateList';
 function Dashboard() {
   const navigate = useNavigate();
   const [activeCandidateId, setActiveCandidateId] = useState(null);
+  const [extractedSkills, setExtractedSkills] = useState([]);
   const [score, setScore] = useState(null);
   const [matchedSkills, setMatchedSkills] = useState([]);
   const [refreshList, setRefreshList] = useState(0);
 
-  const handleUploadSuccess = (data) => {
-    console.log('Upload success, candidateId:', data.candidateId);
-    console.log('Step 1 complete - candidateId set to:', data.candidateId);
+  const handleUploadSuccess = async (data) => {
     setActiveCandidateId(data.candidateId);
+
+    // Auto-extract skills immediately after upload
+    try {
+      const res = await api.post(`/api/extract/${data.candidateId}`);
+      setExtractedSkills(res.data.skills);
+    } catch (err) {
+      console.error('Auto-extraction failed:', err);
+    }
   };
 
   return (
@@ -93,19 +101,27 @@ function Dashboard() {
     setActiveCandidateId(data.candidateId);
 }}
           />
-          {activeCandidateId && (
-            <p style={{color: '#00D4AA', fontSize: '13px', 
-                       marginTop: '8px'}}>
-              ✅ Resume uploaded (ID: {activeCandidateId})
-              — now extract skills then calculate score
-            </p>
+          {extractedSkills.length > 0 && (
+            <div style={{marginTop:'12px'}}>
+              <p style={{color:'#00D4AA', fontSize:'13px',
+                         marginBottom:'8px'}}>
+                ✅ {extractedSkills.length} skills found:
+              </p>
+              <div style={{display:'flex', flexWrap:'wrap', gap:'6px'}}>
+                {extractedSkills.map((skill, i) => (
+                  <span key={i} style={{
+                    background:'rgba(0,212,170,0.15)',
+                    color:'#00D4AA',
+                    padding:'3px 10px',
+                    borderRadius:'12px',
+                    fontSize:'12px'
+                  }}>
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
           )}
-          <div style={{ marginTop: '20px' }}>
-            <SkillBadges
-              candidateId={activeCandidateId}
-              onSkillsExtracted={() => {}}
-            />
-          </div>
         </div>
 
         {/* PANEL 2 — Job Description */}
