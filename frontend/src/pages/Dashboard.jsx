@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/config';
 import FileUpload from '../components/FileUpload';
-import SkillBadges from '../components/SkillBadges';
 import JDInputForm from '../components/JDInputForm';
 import ScoreCard from '../components/ScoreCard';
 import CandidateList from '../components/CandidateList';
@@ -11,19 +10,25 @@ function Dashboard() {
   const navigate = useNavigate();
   const [activeCandidateId, setActiveCandidateId] = useState(null);
   const [extractedSkills, setExtractedSkills] = useState([]);
+  const [extracting, setExtracting] = useState(false);
   const [score, setScore] = useState(null);
   const [matchedSkills, setMatchedSkills] = useState([]);
   const [refreshList, setRefreshList] = useState(0);
 
   const handleUploadSuccess = async (data) => {
-    setActiveCandidateId(data.candidateId);
+    const id = data.candidateId;
+    setActiveCandidateId(id);
 
-    // Auto-extract skills immediately after upload
+    // Auto extract immediately after upload
     try {
-      const res = await api.post(`/api/extract/${data.candidateId}`);
-      setExtractedSkills(res.data.skills);
+      setExtracting(true);
+      const res = await api.post(`/api/extract/${id}`);
+      setExtractedSkills(res.data.skills || []);
     } catch (err) {
-      console.error('Auto-extraction failed:', err);
+      console.error('Extraction failed:', err);
+      setExtractedSkills([]);
+    } finally {
+      setExtracting(false);
     }
   };
 
@@ -94,27 +99,30 @@ function Dashboard() {
           </h2>
           <FileUpload
             onUploadSuccess={handleUploadSuccess}
-            onUploadSuccess={(data) => {
-    console.log("Dashboard got:", data);
-    console.log("Candidate ID:", data.candidateId);
-
-    setActiveCandidateId(data.candidateId);
-}}
           />
+
+          {extracting && (
+            <p style={{color:'#00D4AA', fontSize:'13px',
+                       marginTop:'8px'}}>
+              ⏳ Extracting skills...
+            </p>
+          )}
+
           {extractedSkills.length > 0 && (
             <div style={{marginTop:'12px'}}>
               <p style={{color:'#00D4AA', fontSize:'13px',
-                         marginBottom:'8px'}}>
-                ✅ {extractedSkills.length} skills found:
+                         fontWeight:'600', marginBottom:'8px'}}>
+                ✅ {extractedSkills.length} skills extracted
               </p>
               <div style={{display:'flex', flexWrap:'wrap', gap:'6px'}}>
                 {extractedSkills.map((skill, i) => (
                   <span key={i} style={{
                     background:'rgba(0,212,170,0.15)',
                     color:'#00D4AA',
-                    padding:'3px 10px',
-                    borderRadius:'12px',
-                    fontSize:'12px'
+                    padding:'4px 10px',
+                    borderRadius:'20px',
+                    fontSize:'12px',
+                    border:'1px solid rgba(0,212,170,0.3)'
                   }}>
                     {skill}
                   </span>
