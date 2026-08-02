@@ -27,11 +27,12 @@ function JDInputForm({ candidateId, onScoreReceived }) {
     console.log('Step 3 - matching with candidateId:', candidateId, 'JD length:', jdText.length);
     
     try {
-      const res = await api.post('/api/match', {
-        candidateId: candidateId,
-        jobDescription: jdText
-      });
-      onScoreReceived(res.data.score, res.data.matchedSkills);
+      const res = await api.post(`/api/match/${candidateId}`, {
+  jobDescription: jdText,
+});
+
+      // Pass the score up to the parent page
+     onScoreReceived(res.data.matchScore, res.data.matchedSkills);
     } catch (err) {
       // Show the actual error from backend
       const msg = err.response?.data?.error || 

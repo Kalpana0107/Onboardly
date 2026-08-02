@@ -8,12 +8,28 @@ const candidateRoutes = require("./routes/candidates");
 
 require("dotenv").config();
 
+const fs = require('fs')
+if (!fs.existsSync('./uploads')) {
+  fs.mkdirSync('./uploads', { recursive: true })
+}
+if (!fs.existsSync('./db')) {
+  fs.mkdirSync('./db', { recursive: true })
+}
+
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 
 
-app.use(cors());
+
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://smart-hire-eight-rho.vercel.app'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  credentials: true
+}));
 app.use(express.json());
 
 
@@ -30,11 +46,6 @@ app.use("/api", uploadRoutes);
 app.use("/api", extractRoutes);
 app.use("/api", candidateRoutes);
 app.use("/api", matchRoute);
-
-app.get("/test-error", (req, res, next) => {
-    next(new Error("this is a test error"));
-
-});
 
 
 app.use((err, req, res, next) => {

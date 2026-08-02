@@ -48,23 +48,55 @@ router.post('/match', async (req, res) => {
     const matchedSkills = resumeSkills.filter(skill =>
         jobKeywords.includes(skill.toLowerCase())
     );
+    const { candidateId, jobDescription } = req.body;
 
-    const matchScore =
-        resumeSkills.length > 0
-            ? Math.round(matchedSkills.length / resumeSkills.length * 100)
-            : 0;
+    // Validate inputs
+    if (!candidateId) {
+        return res.status(400).json({
+            error: 'candidateId is required. Upload a resume first.'
+        });
+    }
+    if (!jobDescription || !jobDescription.trim()) {
+        return res.status(400).json({
+            error: 'jobDescription is required.'
+        });
+    }
 
-    db.prepare("UPDATE candidates SET match_score = ? WHERE id = ?")
-        .run(matchScore, candidateId);
+    try {
+        const candidate = db
+            .prepare("SELECT * FROM candidates WHERE id = ?")
+            .get(candidateId);
 
-    res.json({
-        candidateId,
-        matchedSkills,
-        score: matchScore
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+        if (!candidate || !candidate.skills) {
+            return res.status(400).json({
+                error: "Extract skills first (run Day 3 step)"
+            });
+        }
+        const resumeSkills = JSON.parse(candidate.skills);
+
+        const jobKeywords = extractKeywords(jobDescription);
+
+        const matchedSkills = resumeSkills.filter(skill =>
+            jobKeywords.includes(skill.toLowerCase())
+        );
+
+        const matchScore =
+            resumeSkills.length > 0
+                ? Math.round(matchedSkills.length / resumeSkills.length * 100)
+                : 0;
+
+        db.prepare("UPDATE candidates SET match_score = ? WHERE id = ?")
+            .run(matchScore, candidateId);
+
+        res.json({
+            candidateId,
+            matchedSkills,
+            score: matchScore
+        });
+    } catch (error) {
+        console.error('Match error:', error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 module.exports = router;

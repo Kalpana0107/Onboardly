@@ -86,6 +86,12 @@ function Dashboard() {
           </h2>
           <FileUpload
             onUploadSuccess={handleUploadSuccess}
+            onUploadSuccess={(data) => {
+    console.log("Dashboard got:", data);
+    console.log("Candidate ID:", data.candidateId);
+
+    setActiveCandidateId(data.candidateId);
+}}
           />
           {activeCandidateId && (
             <p style={{color: '#00D4AA', fontSize: '13px', 

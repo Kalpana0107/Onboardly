@@ -59,10 +59,14 @@ function FileUpload({ onUploadSuccess }) {
 
     try {
       const response = await api.post('/api/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
+
+console.log("UPLOAD RESPONSE:", response.data);
+
+onUploadSuccess(response.data);
 
       setStatus('done');
       setMessage('Resume uploaded successfully!');
