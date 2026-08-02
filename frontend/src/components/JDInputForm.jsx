@@ -28,12 +28,12 @@ function JDInputForm({ candidateId, onScoreReceived }) {
     
     try {
       const res = await api.post('/api/match', {
-  candidateId,
-  jobDescription: jdText,
-});
+        candidateId,
+        jobDescription: jdText,
+      });
 
       // Pass the score up to the parent page
-     onScoreReceived(res.data.score, res.data.matchedSkills);
+      onScoreReceived(res.data.score, res.data.matchedSkills);
     } catch (err) {
       // Show the actual error from backend
       const msg = err.response?.data?.error || 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/config';
 import FileUpload from '../components/FileUpload';
-import SkillBadges from '../components/SkillBadges';
 import JDInputForm from '../components/JDInputForm';
 import ScoreCard from '../components/ScoreCard';
 import CandidateList from '../components/CandidateList';
@@ -9,14 +9,27 @@ import CandidateList from '../components/CandidateList';
 function Dashboard() {
   const navigate = useNavigate();
   const [activeCandidateId, setActiveCandidateId] = useState(null);
+  const [extractedSkills, setExtractedSkills] = useState([]);
+  const [extracting, setExtracting] = useState(false);
   const [score, setScore] = useState(null);
   const [matchedSkills, setMatchedSkills] = useState([]);
   const [refreshList, setRefreshList] = useState(0);
 
-  const handleUploadSuccess = (data) => {
-    console.log('Upload success, candidateId:', data.candidateId);
-    console.log('Step 1 complete - candidateId set to:', data.candidateId);
-    setActiveCandidateId(data.candidateId);
+  const handleUploadSuccess = async (data) => {
+    const id = data.candidateId;
+    setActiveCandidateId(id);
+
+    // Auto extract immediately after upload
+    try {
+      setExtracting(true);
+      const res = await api.post(`/api/extract/${id}`);
+      setExtractedSkills(res.data.skills || []);
+    } catch (err) {
+      console.error('Extraction failed:', err);
+      setExtractedSkills([]);
+    } finally {
+      setExtracting(false);
+    }
   };
 
   return (
@@ -86,26 +99,37 @@ function Dashboard() {
           </h2>
           <FileUpload
             onUploadSuccess={handleUploadSuccess}
-            onUploadSuccess={(data) => {
-    console.log("Dashboard got:", data);
-    console.log("Candidate ID:", data.candidateId);
-
-    setActiveCandidateId(data.candidateId);
-}}
           />
-          {activeCandidateId && (
-            <p style={{color: '#00D4AA', fontSize: '13px', 
-                       marginTop: '8px'}}>
-              ✅ Resume uploaded (ID: {activeCandidateId})
-              — now extract skills then calculate score
+
+          {extracting && (
+            <p style={{color:'#00D4AA', fontSize:'13px',
+                       marginTop:'8px'}}>
+              ⏳ Extracting skills...
             </p>
           )}
-          <div style={{ marginTop: '20px' }}>
-            <SkillBadges
-              candidateId={activeCandidateId}
-              onSkillsExtracted={() => {}}
-            />
-          </div>
+
+          {extractedSkills.length > 0 && (
+            <div style={{marginTop:'12px'}}>
+              <p style={{color:'#00D4AA', fontSize:'13px',
+                         fontWeight:'600', marginBottom:'8px'}}>
+                ✅ {extractedSkills.length} skills extracted
+              </p>
+              <div style={{display:'flex', flexWrap:'wrap', gap:'6px'}}>
+                {extractedSkills.map((skill, i) => (
+                  <span key={i} style={{
+                    background:'rgba(0,212,170,0.15)',
+                    color:'#00D4AA',
+                    padding:'4px 10px',
+                    borderRadius:'20px',
+                    fontSize:'12px',
+                    border:'1px solid rgba(0,212,170,0.3)'
+                  }}>
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* PANEL 2 — Job Description */}
