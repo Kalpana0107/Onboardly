@@ -1,4 +1,4 @@
-import React from 'react'; import './Layout.css';
+import React from 'react';
  // 'children' is a special React prop — whatever you put inside <Layout>...</Layout> // gets rendered here. Think of it like a picture frame. 
     function Layout({ children })
     { return ( 

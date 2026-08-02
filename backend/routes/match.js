@@ -17,6 +17,37 @@ const extractKeywords = (text) => {
 
 };
 router.post('/match', async (req, res) => {
+  const { candidateId, jobDescription } = req.body;
+  
+  // Better error messages
+  if (!candidateId) {
+    return res.status(400).json({ 
+      error: 'candidateId is required. Upload a resume first.' 
+    });
+  }
+  if (!jobDescription || !jobDescription.trim()) {
+    return res.status(400).json({ 
+      error: 'jobDescription is required.' 
+    });
+  }
+
+  try {
+    const candidate = db
+        .prepare("SELECT * FROM candidates WHERE id = ?")
+        .get(candidateId);
+
+    if (!candidate || !candidate.skills) {
+        return res.status(400).json({
+            error: "Extract skills first (run Day 3 step)"
+        });
+    }
+    const resumeSkills = JSON.parse(candidate.skills);
+
+    const jobKeywords = extractKeywords(jobDescription);
+
+    const matchedSkills = resumeSkills.filter(skill =>
+        jobKeywords.includes(skill.toLowerCase())
+    );
     const { candidateId, jobDescription } = req.body;
 
     // Validate inputs
