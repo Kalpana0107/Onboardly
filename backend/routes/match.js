@@ -17,55 +17,55 @@ const extractKeywords = (text) => {
 
 };
 router.post('/match', async (req, res) => {
-  const { candidateId, jobDescription } = req.body;
-  
-  // Better error messages
-  if (!candidateId) {
-    return res.status(400).json({ 
-      error: 'candidateId is required. Upload a resume first.' 
-    });
-  }
-  if (!jobDescription || !jobDescription.trim()) {
-    return res.status(400).json({ 
-      error: 'jobDescription is required.' 
-    });
-  }
+    const { candidateId, jobDescription } = req.body;
 
-  try {
-    const candidate = db
-        .prepare("SELECT * FROM candidates WHERE id = ?")
-        .get(candidateId);
-
-    if (!candidate || !candidate.skills) {
+    // Better error messages
+    if (!candidateId) {
         return res.status(400).json({
-            error: "Extract skills first (run Day 3 step)"
+            error: 'candidateId is required. Upload a resume first.'
         });
     }
-    const resumeSkills = JSON.parse(candidate.skills);
+    if (!jobDescription || !jobDescription.trim()) {
+        return res.status(400).json({
+            error: 'jobDescription is required.'
+        });
+    }
 
-    const jobKeywords = extractKeywords(jobDescription);
+    try {
+        const candidate = db
+            .prepare("SELECT * FROM candidates WHERE id = ?")
+            .get(candidateId);
 
-    const matchedSkills = resumeSkills.filter(skill =>
-        jobKeywords.includes(skill.toLowerCase())
-    );
+        if (!candidate || !candidate.skills) {
+            return res.status(400).json({
+                error: "Extract skills first (run Day 3 step)"
+            });
+        }
+        const resumeSkills = JSON.parse(candidate.skills);
 
-    const matchScore =
-        resumeSkills.length > 0
-            ? Math.round(matchedSkills.length / resumeSkills.length * 100)
-            : 0;
+        const jobKeywords = extractKeywords(jobDescription);
 
-    db.prepare("UPDATE candidates SET match_score = ? WHERE id = ?")
-        .run(matchScore, candidateId);
+        const matchedSkills = resumeSkills.filter(skill =>
+            jobKeywords.includes(skill.toLowerCase())
+        );
 
-    res.json({
-        candidateId,
-        matchedSkills,
-        score: matchScore
-    });
-  } catch (error) {
-    console.error('Match error:', error);
-    res.status(500).json({ error: error.message });
-  }
+        const matchScore =
+            resumeSkills.length > 0
+                ? Math.round(matchedSkills.length / resumeSkills.length * 100)
+                : 0;
+
+        db.prepare("UPDATE candidates SET match_score = ? WHERE id = ?")
+            .run(matchScore, candidateId);
+
+        res.json({
+            candidateId,
+            matchedSkills,
+            score: matchScore
+        });
+    } catch (error) {
+        console.error('Match error:', error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 module.exports = router;
