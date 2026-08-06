@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
+  const navigate = useNavigate()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -13,7 +15,7 @@ const Navbar = () => {
 
   // Scroll spy — track which section is in view
   useEffect(() => {
-    const sectionIds = ['home', 'features', 'hiw', 'tech', 'demo', 'api', 'roadmap']
+    const sectionIds = ['home', 'features', 'hiw']
     const observers = sectionIds.map(id => {
       const el = document.getElementById(id)
       if (!el) return null
@@ -30,9 +32,6 @@ const Navbar = () => {
   const navLinks = [
     { label: 'Features', href: '#features', id: 'features' },
     { label: 'How It Works', href: '#hiw', id: 'hiw' },
-    { label: 'Tech Stack', href: '#tech', id: 'tech' },
-    { label: 'API', href: '#api', id: 'api' },
-    { label: 'Roadmap', href: '#roadmap', id: 'roadmap' },
   ]
 
   return (
@@ -61,7 +60,7 @@ const Navbar = () => {
           {/* Desktop Actions */}
           <div className="navbar-actions">
             <a
-              href="https://github.com/Kalpana3007/SmartHire"
+              href="https://github.com/Kalpana0107/SmartHire"
               target="_blank"
               rel="noreferrer"
               className="btn btn-ghost btn-sm"
@@ -71,9 +70,12 @@ const Navbar = () => {
               </svg>
               GitHub
             </a>
-            <a href="#demo" className="btn btn-primary btn-sm">
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="btn btn-primary btn-sm"
+            >
               Try Demo →
-            </a>
+            </button>
           </div>
 
           {/* Mobile Hamburger */}
@@ -101,16 +103,19 @@ const Navbar = () => {
         ))}
         <div className="mobile-menu-actions">
           <a
-            href="https://github.com/Kalpana3007/SmartHire"
+            href="https://github.com/Kalpana0107/SmartHire"
             target="_blank"
             rel="noreferrer"
             className="btn btn-ghost"
           >
             ⭐ Star on GitHub
           </a>
-          <a href="#demo" className="btn btn-primary" onClick={() => setMenuOpen(false)}>
+          <button
+            className="btn btn-primary"
+            onClick={() => { setMenuOpen(false); navigate('/dashboard'); }}
+          >
             Try Demo →
-          </a>
+          </button>
         </div>
       </div>
     </>

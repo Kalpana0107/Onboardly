@@ -11,12 +11,28 @@ const mongoose = require("mongoose"); const candidateRoutes = require("./routes/
 
 require("dotenv").config({ path: "./.env" });
 
+const fs = require('fs')
+if (!fs.existsSync('./uploads')) {
+    fs.mkdirSync('./uploads', { recursive: true })
+}
+if (!fs.existsSync('./db')) {
+    fs.mkdirSync('./db', { recursive: true })
+}
+
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 
 
-app.use(cors());
+
+app.use(cors({
+    origin: [
+        'http://localhost:5173',
+        'https://smart-hire-eight-rho.vercel.app'
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: true
+}));
 app.use(express.json());
 
 
@@ -29,14 +45,12 @@ const matchRoute = require("./routes/match");
 
 const db = require("./db/database");
 
-app.use("/health", healthRoute);
+app.use("/api", healthRoute);
 app.use("/api", uploadRoutes);
 app.use("/api", extractRoutes);
 app.use("/api", candidateRoutes);
-app.use("/match", matchRoute);
 app.use("/api/auth", authRoutes);
-
-
+app.use("/api", matchRoute);
 
 
 app.use((err, req, res, next) => {

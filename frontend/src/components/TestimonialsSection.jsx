@@ -1,24 +1,21 @@
 const testimonials = [
   {
-    quote: "SmartHire cut our resume screening time from 3 days to just a few hours. The NLP skill extraction is remarkably accurate.",
-    name: "Priya Anand",
-    role: "HR Lead, TechCorp India",
-    avatar: "PA",
-    grad: "linear-gradient(135deg, #00e5a0, #3b82f6)",
+    quote: 'Reduced our screening time from 2 hours to 10 minutes.',
+    role: 'HR Manager, Tech Startup',
+    avatar: 'HM',
+    grad: 'linear-gradient(135deg, #00e5a0, #3b82f6)',
   },
   {
-    quote: "The candidate scoring system gives us an unbiased ranking. We've improved our shortlisting accuracy significantly.",
-    name: "Rohan Mehta",
-    role: "Talent Acquisition Manager",
-    avatar: "RM",
-    grad: "linear-gradient(135deg, #7c3aed, #a855f7)",
+    quote: 'The match score helps us shortlist candidates without reading every resume.',
+    role: 'Recruitment Lead, MNC',
+    avatar: 'RL',
+    grad: 'linear-gradient(135deg, #7c3aed, #a855f7)',
   },
   {
-    quote: "The REST API integrates perfectly with our existing ATS. Setup was straightforward and the docs are clear.",
-    name: "Neha Kapoor",
-    role: "Senior Software Engineer",
-    avatar: "NK",
-    grad: "linear-gradient(135deg, #f59e0b, #f87171)",
+    quote: 'Simple to use, accurate results. Exactly what we needed.',
+    role: 'Talent Acquisition, IT Firm',
+    avatar: 'TA',
+    grad: 'linear-gradient(135deg, #f59e0b, #f87171)',
   },
 ]
 
@@ -61,7 +58,7 @@ const TestimonialsSection = () => {
         >
           {testimonials.map((t, i) => (
             <div
-              key={t.name}
+              key={t.role}
               style={{
                 background: 'var(--bg-card)',
                 border: '1px solid var(--border-card)',
@@ -94,7 +91,7 @@ const TestimonialsSection = () => {
 
               {/* Quote */}
               <p style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: '1.7', flex: 1 }}>
-                "{t.quote}"
+                &ldquo;{t.quote}&rdquo;
               </p>
 
               {/* Author */}
@@ -115,8 +112,7 @@ const TestimonialsSection = () => {
                   {t.avatar}
                 </div>
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>{t.name}</div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t.role}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>— {t.role}</div>
                 </div>
               </div>
             </div>

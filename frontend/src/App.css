@@ -652,6 +652,12 @@
   position: relative;
 }
 
+.hiw-grid.hiw-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
 .hiw-connector {
   position: absolute;
   top: 36px;
@@ -846,6 +852,14 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   margin-bottom: 64px;
+}
+
+.stats-grid.stats-grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+  margin-bottom: 0;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .stat-card {
@@ -1527,7 +1541,9 @@
 @media (max-width: 768px) {
   .features-grid { grid-template-columns: 1fr; }
   .hiw-grid { grid-template-columns: 1fr 1fr; }
+  .hiw-grid.hiw-grid-3 { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats-grid.stats-grid-3 { grid-template-columns: 1fr; }
   .roadmap-grid { grid-template-columns: 1fr; }
   .navbar-links, .navbar-actions { display: none; }
   .nav-hamburger { display: flex; }

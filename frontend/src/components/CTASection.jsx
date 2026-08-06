@@ -1,4 +1,8 @@
+import { useNavigate } from 'react-router-dom';
+
 const CTASection = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="cta-section">
       <div className="container">
@@ -17,9 +21,9 @@ const CTASection = () => {
             contribute to the project, or simply start screening resumes smarter today.
           </p>
           <div className="cta-actions">
-            <a href="#upload" className="btn btn-primary btn-xl">
+            <button onClick={() => navigate('/dashboard')} className="btn btn-primary btn-xl">
               🚀 Try It Now
-            </a>
+            </button>
             <a
               href="https://github.com/Kalpana3007/SmartHire"
               target="_blank"

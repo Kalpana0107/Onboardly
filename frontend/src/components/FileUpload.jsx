@@ -3,8 +3,6 @@
 
 import React, { useState } from 'react';
 import api from '../api/config';
-import './FileUpload.css';
-
 function FileUpload({ onUploadSuccess }) {
   // isDragging: true when user hovers a file over the drop zone
   const [isDragging, setIsDragging] = useState(false);
@@ -61,10 +59,14 @@ function FileUpload({ onUploadSuccess }) {
 
     try {
       const response = await api.post('/api/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+});
+
+console.log("UPLOAD RESPONSE:", response.data);
+
+onUploadSuccess(response.data);
 
       setStatus('done');
       setMessage('Resume uploaded successfully!');
@@ -79,10 +81,21 @@ function FileUpload({ onUploadSuccess }) {
 
   return (
     <div
-      className={`drop-zone ${isDragging ? 'dragging' : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      style={{
+        background: 'rgba(0, 212, 170, 0.05)',
+        border: '2px dashed rgba(0, 212, 170, 0.4)',
+        borderRadius: '12px',
+        padding: '32px',
+        color: '#94a3b8',
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '12px'
+      }}
     >
       <p>Drag &amp; Drop your resume PDF here</p>
       <p>— or —</p>
@@ -92,17 +105,31 @@ function FileUpload({ onUploadSuccess }) {
         type="file"
         accept=".pdf"
         onChange={(e) => setFile(e.target.files[0])}
+        style={{ marginBottom: '12px' }}
       />
 
       <button
         onClick={handleUpload}
         disabled={status === 'uploading'}
+        style={{
+          background: '#00D4AA',
+          color: '#000000',
+          borderRadius: '8px',
+          padding: '10px 20px',
+          fontWeight: '600',
+          border: 'none',
+          cursor: 'pointer'
+        }}
       >
         {status === 'uploading' ? 'Uploading...' : 'Upload Resume'}
       </button>
 
       {message && (
-        <p className={`msg ${status}`}>
+        <p style={{
+          marginTop: '12px',
+          color: status === 'error' ? '#ef4444' : '#00D4AA',
+          fontWeight: '500'
+        }}>
           {message}
         </p>
       )}
