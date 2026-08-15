@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './routes/ProtectedRoute';
 import HRDashboard from './pages/HRDashboard';
-
+import EmployeeDashboard from './pages/EmployeeDashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
 

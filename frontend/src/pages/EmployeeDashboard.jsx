@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import OnboardingChecklist from '../components/OnboardingChecklist';
+import OnboardingChatbot from '../components/OnboardingChatbot';
 import { useAuth } from '../context/AuthContext';
 
 const EmployeeDashboard = () => {
   const { user } = useAuth();
 
-  // Initial Onboarding Tasks State
   const [tasks, setTasks] = useState([
     { id: 1, title: 'Complete Profile & Identity Verification', category: 'HR Admin', completed: true },
     { id: 2, title: 'Review Code of Conduct & IT Security Policy', category: 'Compliance', completed: false },
@@ -25,7 +25,7 @@ const EmployeeDashboard = () => {
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       <Navbar />
 
-      <main className="flex-1 max-w-5xl w-full mx-auto p-6 md:p-8 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-6 md:p-8 space-y-8">
         {/* Employee Welcome Banner */}
         <div className="bg-gradient-to-r from-indigo-900/40 to-slate-900 border border-indigo-500/20 rounded-2xl p-6 md:p-8">
           <div className="inline-block px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-3">
@@ -39,8 +39,11 @@ const EmployeeDashboard = () => {
           </p>
         </div>
 
-        {/* Dynamic Checklist Component */}
-        <OnboardingChecklist tasks={tasks} onToggleTask={handleToggleTask} />
+        {/* 2-Column Responsive Layout: Checklist + Gemini Chatbot */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <OnboardingChecklist tasks={tasks} onToggleTask={handleToggleTask} />
+          <OnboardingChatbot />
+        </div>
       </main>
     </div>
   );
