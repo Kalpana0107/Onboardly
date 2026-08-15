@@ -1,43 +1,50 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Navbar from './components/Navbar'
-import HeroSection from './components/HeroSection'
-import Ticker from './components/Ticker'
-import HowItWorks from './components/HowItWorks'
-import FeaturesSection from './components/FeaturesSection'
-import StatsSection from './components/StatsSection'
-import TestimonialsSection from './components/TestimonialsSection'
-import CTASection from './components/CTASection'
-import Footer from './components/Footer'
-import ScrollToTop from './components/ScrollToTop'
-import Dashboard from './pages/Dashboard'
-import './index.css'
-import './App.css'
-function LandingPage() {
-  return (
-    <>
-      <Navbar />
-      <HeroSection />
-      <Ticker />
-      <HowItWorks />
-      <FeaturesSection />
-      <StatsSection />
-      <TestimonialsSection />
-      <CTASection />
-      <Footer />
-      <ScrollToTop />
-    </>
-  )
-}
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './routes/ProtectedRoute';
+import HRDashboard from './pages/HRDashboard';
+
+import Login from './pages/Login';
+import Register from './pages/Register';
+
+// Fallback placeholder components until HR & Employee dashboard issues are built
+const HRDashboardPlaceholder = () => (
+  <div className="p-8 bg-slate-900 text-white min-h-screen">
+    <h1 className="text-2xl font-bold">HR Dashboard Placeholder</h1>
+  </div>
+);
+
+const EmployeeDashboardPlaceholder = () => (
+  <div className="p-8 bg-slate-900 text-white min-h-screen">
+    <h1 className="text-2xl font-bold">Employee Dashboard Placeholder</h1>
+  </div>
+);
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-      </Routes>
-    </BrowserRouter>
-  )
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          {/* Protected HR Routes */}
+          <Route element={<ProtectedRoute allowedRole="hr" />}>
+            <Route path="/hr/dashboard" element={<HRDashboardPlaceholder />} />
+          </Route>
+
+          {/* Protected Employee Routes */}
+          <Route element={<ProtectedRoute allowedRole="employee" />}>
+            <Route path="/employee/dashboard" element={<EmployeeDashboardPlaceholder />} />
+          </Route>
+
+          {/* Default Fallback */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
