@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import CompanyQA from '../components/CompanyQA';
 const EmployeeManager = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +57,7 @@ const EmployeeManager = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiBaseUrl}/api/auth/register-employee`, {
+      const response = await fetch(`${apiBaseUrl}/api/hr/create-employee`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

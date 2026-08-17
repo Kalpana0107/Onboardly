@@ -1,23 +1,14 @@
-// FileUpload.jsx — Drag-and-drop resume uploader.
-// Uses React state to track: drag state, selected file, upload status.
-
 import React, { useState } from 'react';
 import api from '../api/config';
-function FileUpload({ onUploadSuccess }) {
-  // isDragging: true when user hovers a file over the drop zone
+import Spinner from './Common/Spinner';
+
+function FileUpload({ onSkillsExtracted }) {
   const [isDragging, setIsDragging] = useState(false);
-
-  // The chosen file
   const [file, setFile] = useState(null);
-
-  // 'uploading', 'done', 'error'
-  const [status, setStatus] = useState('');
-
-  // Feedback for the user
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
 
-  // Called when user drags a file over the zone.
-  // Prevents browser's default behavior (opening the file).
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -27,112 +18,116 @@ function FileUpload({ onUploadSuccess }) {
     setIsDragging(false);
   };
 
-  // Called when user drops the file onto the zone
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
 
     const dropped = e.dataTransfer.files[0];
-
-    // Only allow PDF files
     if (dropped && dropped.type === 'application/pdf') {
       setFile(dropped);
       setMessage(`Selected: ${dropped.name}`);
+      setError(null);
     } else {
-      setMessage('Please upload a PDF file only.');
+      setError('Please upload a PDF file only.');
+      setFile(null);
+      setMessage('');
     }
   };
 
-  // Called when user clicks the upload button
   const handleUpload = async () => {
     if (!file) {
-      setMessage('No file selected!');
+      setError('No file selected!');
       return;
     }
 
-    setStatus('uploading');
+    setLoading(true);
+    setError(null);
+    setMessage('');
 
-    // FormData is used for sending files.
-    // 'resume' must match the Multer field name on the backend.
     const formData = new FormData();
     formData.append('resume', file);
 
     try {
-      const response = await api.post('/api/upload', formData, {
-  headers: {
-    'Content-Type': 'multipart/form-data',
-  },
-});
+      // 1. Upload Resume
+      const uploadRes = await api.post('/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-console.log("UPLOAD RESPONSE:", response.data);
+      const candidateId = uploadRes.data.candidateId;
+      if (!candidateId) {
+        throw new Error('Upload succeeded but no Candidate ID was returned.');
+      }
 
-onUploadSuccess(response.data);
+      setMessage('Resume uploaded successfully! Running skill extraction...');
 
-      setStatus('done');
-      setMessage('Resume uploaded successfully!');
-
-      // Notify parent component with backend response
-      onUploadSuccess(response.data);
+      // 2. Extract Skills
+      const extractRes = await api.post(`/api/extract/${candidateId}`);
+      
+      const skills = extractRes.data.result?.skills || [];
+      setMessage('Resume parsed and skills extracted successfully!');
+      
+      if (onSkillsExtracted) {
+        onSkillsExtracted(skills);
+      }
     } catch (err) {
-      setStatus('error');
-      setMessage('Upload failed. Is the backend running?');
+      console.error(err);
+      setError(err.response?.data?.error || err.message || 'Failed to process resume.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-      style={{
-        background: 'rgba(0, 212, 170, 0.05)',
-        border: '2px dashed rgba(0, 212, 170, 0.4)',
-        borderRadius: '12px',
-        padding: '32px',
-        color: '#94a3b8',
-        textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '12px'
-      }}
-    >
-      <p>Drag &amp; Drop your resume PDF here</p>
-      <p>— or —</p>
-
-      {/* Fallback: regular file input */}
-      <input
-        type="file"
-        accept=".pdf"
-        onChange={(e) => setFile(e.target.files[0])}
-        style={{ marginBottom: '12px' }}
-      />
-
-      <button
-        onClick={handleUpload}
-        disabled={status === 'uploading'}
-        style={{
-          background: '#00D4AA',
-          color: '#000000',
-          borderRadius: '8px',
-          padding: '10px 20px',
-          fontWeight: '600',
-          border: 'none',
-          cursor: 'pointer'
-        }}
-      >
-        {status === 'uploading' ? 'Uploading...' : 'Upload Resume'}
-      </button>
-
-      {message && (
-        <p style={{
-          marginTop: '12px',
-          color: status === 'error' ? '#ef4444' : '#00D4AA',
-          fontWeight: '500'
-        }}>
-          {message}
-        </p>
+    <div className="space-y-4">
+      {error && (
+        <div className="p-3 bg-red-900/50 border border-red-500 rounded-lg text-red-200 text-xs flex justify-between items-center">
+          <span>{error}</span>
+          <button onClick={() => setError(null)} className="text-red-400 font-bold ml-2">✕</button>
+        </div>
       )}
+
+      {message && !error && (
+        <div className="p-3 bg-indigo-500/10 border border-indigo-500/30 rounded-lg text-indigo-300 text-xs">
+          {message}
+        </div>
+      )}
+
+      <div
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        className={`border-2 border-dashed rounded-xl p-8 text-center flex flex-col items-center gap-3 transition-colors ${
+          isDragging ? 'bg-indigo-500/10 border-indigo-500' : 'bg-slate-950/20 border-slate-700 hover:border-slate-600'
+        }`}
+      >
+        <span className="text-3xl">📄</span>
+        <p className="text-sm text-slate-400">Drag &amp; Drop your resume PDF here</p>
+        <p className="text-xs text-slate-500">— or —</p>
+
+        <input
+          type="file"
+          accept=".pdf"
+          onChange={(e) => {
+            const selected = e.target.files[0];
+            if (selected) {
+              setFile(selected);
+              setMessage(`Selected: ${selected.name}`);
+              setError(null);
+            }
+          }}
+          className="text-xs text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-300 file:cursor-pointer hover:file:bg-slate-700"
+        />
+
+        <button
+          onClick={handleUpload}
+          disabled={loading || !file}
+          className="mt-2 w-full max-w-xs bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-medium py-2 px-4 rounded-lg text-xs shadow-md transition disabled:cursor-not-allowed flex items-center justify-center"
+        >
+          {loading ? <Spinner text="Processing..." /> : 'Upload & Extract Resume'}
+        </button>
+      </div>
     </div>
   );
 }
