@@ -8,7 +8,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -30,20 +30,14 @@ const Login = () => {
     }
   };
 
- const handleGoogleLogin = () => {
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
-  
-  // Clean up any trailing slash to prevent double slashes
-  const baseUrl = apiBaseUrl.replace(/\/$/, '');
-  
-  // If apiBaseUrl ALREADY has /api, don't add it again:
-  if (baseUrl.endsWith('/api')) {
-    window.location.href = `${baseUrl}/auth/google`;
-  } else {
-    window.location.href = `${baseUrl}/api/auth/google`;
-  }
-};
-
+  const handleGoogleLogin = async () => {
+    setError('');
+    try {
+      await loginWithGoogle();
+    } catch (err) {
+      setError(err.message || 'Google sign-in failed. Please try again.');
+    }
+  };
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 text-slate-100">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
