@@ -31,19 +31,17 @@ const Login = () => {
   };
 
  const handleGoogleLogin = () => {
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+  // Hardcode your live Render backend as the absolute fallback instead of localhost
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://smarthire-backend-ysya.onrender.com/api';
   
-  // Clean up any trailing slash to prevent double slashes
   const baseUrl = apiBaseUrl.replace(/\/$/, '');
   
-  // If apiBaseUrl ALREADY has /api, don't add it again:
   if (baseUrl.endsWith('/api')) {
     window.location.href = `${baseUrl}/auth/google`;
   } else {
     window.location.href = `${baseUrl}/api/auth/google`;
   }
 };
-
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 text-slate-100">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">

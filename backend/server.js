@@ -23,10 +23,20 @@ const PORT = process.env.PORT || 3000;
 
 
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://smart-hire-eight-rho.vercel.app'
-  ],
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://smart-hire-eight-rho.vercel.app'
+    ];
+    const isVercel = origin.endsWith('.vercel.app') || origin.includes('vercel');
+    if (allowedOrigins.indexOf(origin) !== -1 || isVercel) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true
 }));
@@ -38,6 +48,11 @@ app.use(express.json());
 const healthRoute = require("./routes/health");
 
 const matchRoute = require("./routes/match");
+const authRoutes = require("./routes/authRoutes");
+const hrRoutes = require("./routes/hrRoutes");
+const checklistRoutes = require("./routes/checklistRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+const ragRoutes = require("./routes/ragRoutes");
 
 const db = require("./db/database");
 
@@ -46,6 +61,11 @@ app.use("/api", uploadRoutes);
 app.use("/api", extractRoutes);
 app.use("/api", candidateRoutes);
 app.use("/api", matchRoute);
+app.use("/api", authRoutes);
+app.use("/api", hrRoutes);
+app.use("/api", checklistRoutes);
+app.use("/api", chatRoutes);
+app.use("/api", ragRoutes);
 
 
 app.use((err, req, res, next) => {
