@@ -1,50 +1,86 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
+import EmployeeSidebar from '../components/EmployeeSidebar';
 import OnboardingChecklist from '../components/OnboardingChecklist';
 import OnboardingChatbot from '../components/OnboardingChatbot';
+import CompanyQA from '../components/CompanyQA';
 import { useAuth } from '../context/AuthContext';
 
 const EmployeeDashboard = () => {
   const { user } = useAuth();
-
-  const [tasks, setTasks] = useState([
-    { id: 1, title: 'Complete Profile & Identity Verification', category: 'HR Admin', completed: true },
-    { id: 2, title: 'Review Code of Conduct & IT Security Policy', category: 'Compliance', completed: false },
-    { id: 3, title: 'Set up 2FA & Work Credentials', category: 'IT Support', completed: false },
-    { id: 4, title: 'Join Department Slack/Teams Channels', category: 'Team Integration', completed: false },
-    { id: 5, title: 'Schedule 1-on-1 Intro with Manager', category: 'Management', completed: false },
-  ]);
-
-  const handleToggleTask = (taskId) => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, completed: !t.completed } : t))
-    );
-  };
+  
+  // State for active tab view: 'chat' | 'checklist' | 'qa'
+  const [activeTab, setActiveTab] = useState('chat');
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto p-6 md:p-8 space-y-8">
-        {/* Employee Welcome Banner */}
-        <div className="bg-gradient-to-r from-indigo-900/40 to-slate-900 border border-indigo-500/20 rounded-2xl p-6 md:p-8">
-          <div className="inline-block px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-3">
-            Employee Portal
-          </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-white">
-            Welcome aboard, {user?.name || 'Team Member'}! 👋
-          </h1>
-          <p className="text-sm text-slate-300 mt-1">
-            Department: <span className="text-white font-medium">{user?.department || 'Engineering'}</span>
-          </p>
-        </div>
+      <div className="flex flex-1">
+        {/* Left Dark Sidebar */}
+        <EmployeeSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        {/* 2-Column Responsive Layout: Checklist + Gemini Chatbot */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          <OnboardingChecklist tasks={tasks} onToggleTask={handleToggleTask} />
-          <OnboardingChatbot />
-        </div>
-      </main>
+        {/* Dynamic Right Content Viewport */}
+        <main className="flex-1 p-8 overflow-y-auto max-w-6xl space-y-6">
+          {/* Welcome Banner */}
+          <div className="bg-gradient-to-r from-indigo-900/40 to-slate-900 border border-indigo-500/20 rounded-2xl p-6">
+            <div className="inline-block px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-3">
+              Employee Portal
+            </div>
+            <h1 className="text-xl md:text-2xl font-extrabold text-white">
+              Welcome aboard, {user?.fullName || user?.name || 'Team Member'}! 👋
+            </h1>
+            {user?.department && (
+              <p className="text-xs text-slate-400 mt-1">
+                Department: <span className="text-slate-200 font-medium">{user.department}</span>
+              </p>
+            )}
+          </div>
+
+          {/* Tab Content Views */}
+          {activeTab === 'chat' && (
+            <div className="space-y-4 animate-fadeIn">
+              <div>
+                <h2 className="text-xl font-bold text-white mb-1">AI Onboarding Assistant</h2>
+                <p className="text-xs text-slate-400">
+                  Ask questions about your role, tools, systems, or checklist progress.
+                </p>
+              </div>
+              <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-md h-[500px]">
+                <OnboardingChatbot />
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'checklist' && (
+            <div className="space-y-4 animate-fadeIn">
+              <div>
+                <h2 className="text-xl font-bold text-white mb-1">Your Onboarding Checklist</h2>
+                <p className="text-xs text-slate-400">
+                  Complete tasks to finish your onboarding journey.
+                </p>
+              </div>
+              <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-md">
+                <OnboardingChecklist />
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'qa' && (
+            <div className="space-y-4 animate-fadeIn">
+              <div>
+                <h2 className="text-xl font-bold text-white mb-1">Company Policy Q&A</h2>
+                <p className="text-xs text-slate-400">
+                  Search policy documents and retrieve structured answers verified by RAG.
+                </p>
+              </div>
+              <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-md">
+                <CompanyQA />
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 };

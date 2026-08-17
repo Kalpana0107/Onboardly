@@ -31,12 +31,12 @@ function App() {
 
           {/* Protected HR Routes */}
           <Route element={<ProtectedRoute allowedRole="hr" />}>
-            <Route path="/hr/dashboard" element={<HRDashboardPlaceholder />} />
+            <Route path="/hr/dashboard" element={<HRDashboard />} />
           </Route>
 
           {/* Protected Employee Routes */}
           <Route element={<ProtectedRoute allowedRole="employee" />}>
-            <Route path="/employee/dashboard" element={<EmployeeDashboardPlaceholder />} />
+            <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
           </Route>
 
           {/* Default Fallback */}
