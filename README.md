@@ -87,8 +87,7 @@ The system extracts information from uploaded resumes, analyzes skills using Nat
 
 | Technology | Purpose |
 |------------|----------|
-| SQLite | Local Development |
-| PostgreSQL | Production Database |
+| SQLite | Local Development | | Production Database |
 
 ### Deployment
 
@@ -127,7 +126,7 @@ The system extracts information from uploaded resumes, analyzes skills using Nat
           ▼
 ┌──────────────────────┐
 │ Candidate Database   │
-│ SQLite/PostgreSQL    │
+│ SQLite │
 └──────────────────────┘
 ```
 
