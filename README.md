@@ -1,4 +1,4 @@
-# SmartHire
+# Onboardly
 
 # 📄 AI-Powered Resume Screening System
 
