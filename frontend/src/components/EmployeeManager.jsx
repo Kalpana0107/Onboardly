@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../api/config';
 import CompanyQA from '../components/CompanyQA';
 const EmployeeManager = () => {
   const [employees, setEmployees] = useState([]);
@@ -16,9 +17,7 @@ const EmployeeManager = () => {
   });
   const [submitting, setSubmitting] = useState(false);
 
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-
-  useEffect(() => {
+    useEffect(() => {
     fetchEmployees();
   }, []);
 
@@ -26,7 +25,7 @@ const EmployeeManager = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiBaseUrl}/api/employees`, {
+      const response = await fetch(`${API_BASE_URL}/employees`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -57,7 +56,7 @@ const EmployeeManager = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiBaseUrl}/api/hr/create-employee`, {
+      const response = await fetch(`${API_BASE_URL}/hr/create-employee`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
