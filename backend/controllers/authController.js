@@ -1,114 +1,125 @@
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const db = require('../db/database');
 
-const generateToken = (user) => {
-    return jwt.sign({
-        userId: user._id,
-        role: user.role,
+const JWT_SECRET = process.env.JWT_SECRET || 'smarthire_dev_secret_change_in_production';
+const JWT_EXPIRES_IN = '7d';
 
-    },
-        process.env.JWT_SECRET,
-        {
-            expiresIn: "7d",
+/**
+ * POST /api/auth/register
+ * Body: { fullName, email, password, role? }
+ * Returns: { token, user: { id, fullName, email, role } }
+ */
+const register = async (req, res) => {
+  try {
+    const { fullName, name, email, password, role } = req.body;
 
-        }
+    // Support both 'fullName' and 'name' from the frontend
+    const displayName = fullName || name;
+
+    if (!displayName || !email || !password) {
+      return res.status(400).json({ error: 'fullName, email, and password are required.' });
+    }
+
+    if (!email.includes('@')) {
+      return res.status(400).json({ error: 'Invalid email address.' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters.' });
+    }
+
+    const allowedRoles = ['hr', 'employee'];
+    const userRole = allowedRoles.includes(role) ? role : 'employee';
+
+    // Check if email already taken
+    const existing = User.findByEmail(email);
+    if (existing) {
+      return res.status(409).json({ error: 'An account with this email already exists.' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = User.create({
+      fullName: displayName,
+      email,
+      password: hashedPassword,
+      role: userRole,
+    });
+
+    if (userRole === 'employee') {
+      try {
+        db.prepare('INSERT OR IGNORE INTO employees_info (userId, department, progress, completionEmailSent) VALUES (?, ?, 0, 0)')
+          .run(newUser.id, 'Engineering');
+      } catch (e) {
+        // Ignored if table creation is deferred
+      }
+    }
+
+    const token = jwt.sign(
+      { userId: newUser.id, role: newUser.role },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
     );
+
+    return res.status(201).json({
+      token,
+      user: {
+        id: newUser.id,
+        fullName: newUser.fullName,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    });
+  } catch (err) {
+    console.error('Register error:', err);
+    return res.status(500).json({ error: 'Registration failed. Please try again.' });
+  }
 };
 
-exports.register = async (req, res) => {
-    try {
-        const { fullName, email, password, role } = req.body;
+/**
+ * POST /api/auth/login
+ * Body: { email, password }
+ * Returns: { token, user: { id, fullName, email, role } }
+ */
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-        if (!fullName || !email || !password) {
-            return res.status(400).json({
-                message: " all requires fields must be provided",
-
-            });
-
-        }
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({
-                message: " user already exists",
-            });
-
-        }
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const user = await User.create({
-            fullName,
-            email,
-            password: hashedPassword,
-            role,
-
-        });
-
-        const token = generateToken(user);
-
-        res.status(201).json({
-            token,
-            user: {
-                id: user._id,
-                fullName: user.fullName,
-                email: user.email,
-                role: user.role,
-
-            },
-        });
-
-
-    } catch (err) {
-        console.error(err);
-
-        res.status(500).json({
-            message: "server error",
-
-        });
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required.' });
     }
-};
 
-exports.login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            return res.status(401).json({
-                message: " invalid credentials",
-
-            });
-        } const isMatch = await bcrypt.compare(password, user.password);
-
-        if (!isMatch) {
-            return res.status(401).json({
-                message: " invalid credentials",
-
-            });
-        }
-
-        const token = generateToken(user);
-        res.json({
-            token,
-            user: {
-                id: user._id,
-                fullName: user.fullName,
-                email: user.email,
-                role: user.role,
-
-            },
-
-        });
-
-    } catch (err) {
-
-        console.error(err);
-
-        res.status(500).json({
-            message: " server error",
-        });
-
+    const user = User.findByEmail(email);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid email or password.' });
     }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid email or password.' });
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
+    return res.status(200).json({
+      token,
+      user: {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    return res.status(500).json({ error: 'Login failed. Please try again.' });
+  }
 };
 
+module.exports = { register, login };

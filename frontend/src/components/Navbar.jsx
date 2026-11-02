@@ -1,125 +1,114 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState('home')
-  const navigate = useNavigate()
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', onScroll)
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  // Scroll spy — track which section is in view
-  useEffect(() => {
-    const sectionIds = ['home', 'features', 'hiw']
-    const observers = sectionIds.map(id => {
-      const el = document.getElementById(id)
-      if (!el) return null
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveSection(id) },
-        { rootMargin: '-40% 0px -55% 0px' }
-      )
-      obs.observe(el)
-      return obs
-    })
-    return () => observers.forEach(o => o?.disconnect())
-  }, [])
-
-  const navLinks = [
-    { label: 'Features', href: '#features', id: 'features' },
-    { label: 'How It Works', href: '#hiw', id: 'hiw' },
-  ]
+  const handleDashboardRedirect = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    if (user?.role === 'hr') {
+      navigate('/hr/dashboard');
+    } else {
+      navigate('/employee/dashboard');
+    }
+  };
 
   return (
-    <>
-      <nav className={`navbar${scrolled ? ' scrolled' : ''}`} id="top">
-        <div className="navbar-inner">
-          {/* Logo */}
-          <a className="navbar-logo" href="#home">
-            <div className="logo-icon">SH</div>
-            <span className="logo-text">Smart<span>Hire</span></span>
-          </a>
-
-          {/* Desktop Links */}
-          <div className="navbar-links">
-            {navLinks.map(l => (
-              <a
-                key={l.label}
-                href={l.href}
-                className={activeSection === l.id ? 'active' : ''}
-              >
-                {l.label}
-              </a>
-            ))}
+    <nav className="bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Brand Logo */}
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-white text-lg shadow-md">
+                S
+              </div>
+              <span className="font-bold text-xl tracking-tight text-white">
+                Smart<span className="text-indigo-400">Hire</span>
+              </span>
+            </Link>
           </div>
 
-          {/* Desktop Actions */}
-          <div className="navbar-actions">
+          {/* Clean Navigation Links */}
+          <div className="hidden md:flex items-center space-x-8">
             <a
-              href="https://github.com/Kalpana0107/SmartHire"
-              target="_blank"
-              rel="noreferrer"
-              className="btn btn-ghost btn-sm"
+              href="#features"
+              className="text-slate-300 hover:text-white text-sm font-medium transition-colors"
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0 }}>
-                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-              </svg>
-              GitHub
+              Features
             </a>
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="btn btn-primary btn-sm"
+            <a
+              href="#how-it-works"
+              className="text-slate-300 hover:text-white text-sm font-medium transition-colors"
             >
-              Try Demo →
-            </button>
+              How It Works
+            </a>
+            <a
+              href="https://github.com/Kalpana0107/Onboardly"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-300 hover:text-white text-sm font-medium transition-colors flex items-center gap-1"
+            >
+              GitHub
+              <svg
+                className="w-4 h-4 opacity-70"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            </a>
           </div>
 
-          {/* Mobile Hamburger */}
-          <button
-            className={`nav-hamburger${menuOpen ? ' open' : ''}`}
-            onClick={() => setMenuOpen(v => !v)}
-            aria-label="Toggle navigation menu"
-          >
-            <span /><span /><span />
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      <div className={`mobile-menu${menuOpen ? ' open' : ''}`} role="dialog" aria-label="Mobile navigation">
-        {navLinks.map(l => (
-          <a
-            key={l.label}
-            href={l.href}
-            className={activeSection === l.id ? 'active' : ''}
-            onClick={() => setMenuOpen(false)}
-          >
-            {l.label}
-          </a>
-        ))}
-        <div className="mobile-menu-actions">
-          <a
-            href="https://github.com/Kalpana0107/SmartHire"
-            target="_blank"
-            rel="noreferrer"
-            className="btn btn-ghost"
-          >
-            ⭐ Star on GitHub
-          </a>
-          <button
-            className="btn btn-primary"
-            onClick={() => { setMenuOpen(false); navigate('/dashboard'); }}
-          >
-            Try Demo →
-          </button>
+          {/* Auth Call-to-Action Buttons */}
+          <div className="flex items-center space-x-4">
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={handleDashboardRedirect}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={logout}
+                  className="text-slate-400 hover:text-white text-sm font-medium transition-colors"
+                >
+                  Log out
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-3">
+                <Link
+                  to="/login"
+                  className="text-slate-300 hover:text-white text-sm font-medium transition-colors"
+                >
+                  Log in
+                </Link>
+                <Link
+                  to="/register"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                >
+                  Get Started
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </>
-  )
-}
+    </nav>
+  );
+};
 
-export default Navbar
+export default Navbar;
