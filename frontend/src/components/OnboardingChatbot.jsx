@@ -12,9 +12,7 @@ const OnboardingChatbot = () => {
   const [loading, setLoading] = useState(false);
   const chatBottomRef = useRef(null);
 
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-
-  useEffect(() => {
+    useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
@@ -30,7 +28,7 @@ const OnboardingChatbot = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiBaseUrl}/api/chat`, {
+      const response = await fetch(`${API_BASE_URL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

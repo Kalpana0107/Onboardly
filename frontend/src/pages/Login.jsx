@@ -8,7 +8,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -30,18 +30,14 @@ const Login = () => {
     }
   };
 
- const handleGoogleLogin = () => {
-  // Hardcode your live Render backend as the absolute fallback instead of localhost
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://smarthire-backend-ysya.onrender.com/api';
-  
-  const baseUrl = apiBaseUrl.replace(/\/$/, '');
-  
-  if (baseUrl.endsWith('/api')) {
-    window.location.href = `${baseUrl}/auth/google`;
-  } else {
-    window.location.href = `${baseUrl}/api/auth/google`;
-  }
-};
+  const handleGoogleLogin = async () => {
+    setError('');
+    try {
+      await loginWithGoogle();
+    } catch (err) {
+      setError(err.message || 'Google sign-in failed. Please try again.');
+    }
+  };
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 text-slate-100">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">

@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const db = require('../db/database');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'smarthire_dev_secret_change_in_production';
 const JWT_EXPIRES_IN = '7d';
@@ -46,6 +47,15 @@ const register = async (req, res) => {
       password: hashedPassword,
       role: userRole,
     });
+
+    if (userRole === 'employee') {
+      try {
+        db.prepare('INSERT OR IGNORE INTO employees_info (userId, department, progress, completionEmailSent) VALUES (?, ?, 0, 0)')
+          .run(newUser.id, 'Engineering');
+      } catch (e) {
+        // Ignored if table creation is deferred
+      }
+    }
 
     const token = jwt.sign(
       { userId: newUser.id, role: newUser.role },

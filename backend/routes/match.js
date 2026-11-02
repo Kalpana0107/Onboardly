@@ -93,10 +93,8 @@ router.post('/match', async (req, res) => {
       try {
         candidateSkills = await runNLPExtraction(candidate.id, candidate.filepath);
       } catch (extractErr) {
-        return res.status(500).json({
-          error: 'NLP extraction failed during matching process.',
-          detail: extractErr.message
-        });
+        console.warn('NLP extraction fallback during matching:', extractErr.message);
+        candidateSkills = [];
       }
     }
 
