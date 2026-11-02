@@ -1,6 +1,10 @@
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+
+
 const uploadRoutes = require("./routes/upload");
 const extractRoutes = require("./routes/extract");
-
+const authRoutes = require("./routes/authRoutes");
 const express = require("express");
 const cors = require("cors");
 const fs = require('fs');
@@ -69,6 +73,7 @@ app.use("/api", healthRoute);
 app.use("/api", uploadRoutes);
 app.use("/api", extractRoutes);
 app.use("/api", candidateRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api", matchRoute);
 app.use("/api", authRoutes);
 app.use("/api", hrRoutes);
@@ -101,3 +106,18 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+console.log(process.env.MONGODB_URI);
+
+mongoose.connect(process.env.MONGODB_URI, {
+    serverSelectionTimeoutMS: 10000,
+})
+    .then(() => {
+        console.log("MongoDB Connected");
+
+        app.listen(PORT, () => {
+            console.log(`Server running on http://localhost:${PORT}`);
+        });
+    })
+    .catch((err) => {
+        console.error("MongoDB Connection Error:", err);
+    });
