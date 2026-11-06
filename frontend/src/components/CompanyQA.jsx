@@ -1,6 +1,7 @@
 // frontend/src/components/CompanyQA.jsx
 import React, { useState } from 'react';
 import Spinner from './Common/Spinner';
+import { API_BASE_URL } from '../api/config';
 
 export default function CompanyQA() {
   const [query, setQuery] = useState('');
@@ -15,11 +16,9 @@ export default function CompanyQA() {
     setLoading(true);
     setError(null);
 
-    const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || 'https://smarthire-backend-ysya.onrender.com/api').replace(/\/$/, '');
-
-    try {
+        try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${apiBaseUrl}/rag/query`, {
+      const res = await fetch(`${API_BASE_URL}/rag/query`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

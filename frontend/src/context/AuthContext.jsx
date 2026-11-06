@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { createClient } from '@supabase/supabase-js';
+import { API_BASE_URL } from '../api/config';
 
 const AuthContext = createContext(null);
 
@@ -14,8 +15,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
-
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://smarthire-backend-ysya.onrender.com/api';
 
   useEffect(() => {
     // Synchronize stored user state on initial load
@@ -42,7 +41,7 @@ export const AuthProvider = ({ children }) => {
             try {
               // Try to register the Google user with our backend
               // If they already exist, fall back to login
-              const registerRes = await fetch(`${apiBaseUrl}/auth/register`, {
+              const registerRes = await fetch(`${API_BASE_URL}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -58,7 +57,7 @@ export const AuthProvider = ({ children }) => {
                 data = await registerRes.json();
               } else {
                 // User likely already exists, try login
-                const loginRes = await fetch(`${apiBaseUrl}/auth/login`, {
+                const loginRes = await fetch(`${API_BASE_URL}/auth/login`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
@@ -89,7 +88,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const response = await fetch(`${apiBaseUrl}/auth/login`, {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -123,7 +122,7 @@ export const AuthProvider = ({ children }) => {
       payload = { name: nameOrData, email, password, role };
     }
 
-    const response = await fetch(`${apiBaseUrl}/auth/register`, {
+    const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

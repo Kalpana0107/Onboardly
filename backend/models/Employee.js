@@ -2,6 +2,14 @@ const db = require('../db/database');
 
 // Create onboarding_tasks and employees_info tables if they do not exist
 db.exec(`
+  CREATE TABLE IF NOT EXISTS employees_info (
+    userId INTEGER PRIMARY KEY,
+    department TEXT NOT NULL DEFAULT 'Engineering',
+    progress INTEGER NOT NULL DEFAULT 0,
+    completionEmailSent INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE
+  );
+
   CREATE TABLE IF NOT EXISTS onboarding_tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     userId INTEGER NOT NULL,
@@ -17,6 +25,15 @@ const Employee = {
    * Initialize a standard checklist for a new employee.
    */
   initChecklist: (userId) => {
+    try {
+      db.prepare(`
+        INSERT OR IGNORE INTO employees_info (userId, department, progress, completionEmailSent)
+        VALUES (?, 'Engineering', 0, 0)
+      `).run(userId);
+    } catch (e) {
+      // Table will be created above
+    }
+
     const defaultTasks = [
       'Complete Profile & Identity Verification',
       'Review Code of Conduct & IT Security Policy',
@@ -40,7 +57,7 @@ const Employee = {
    * Get employee checklist tasks and calculated progress.
    */
   getChecklist: (userId) => {
-    // Ensure tasks exist
+    // Ensure tasks exist and employee_info exists
     Employee.initChecklist(userId);
 
     const tasks = db.prepare('SELECT id, title, completed, completedAt FROM onboarding_tasks WHERE userId = ?').all(userId);
@@ -70,6 +87,8 @@ const Employee = {
    * Toggles task completion state and recalculates progress.
    */
   toggleTask: (userId, taskId) => {
+    Employee.initChecklist(userId);
+
     const task = db.prepare('SELECT * FROM onboarding_tasks WHERE id = ? AND userId = ?').get(taskId, userId);
     if (!task) {
       throw new Error(`Task with id ${taskId} not found.`);

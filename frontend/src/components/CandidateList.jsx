@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { API_BASE_URL } from '../api/config';
 
 const CandidateList = () => {
   const [candidates, setCandidates] = useState([]);
@@ -9,9 +10,7 @@ const CandidateList = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSkills, setSelectedSkills] = useState([]);
 
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
-
-  useEffect(() => {
+    useEffect(() => {
     fetchCandidates();
   }, []);
 
@@ -20,7 +19,7 @@ const CandidateList = () => {
     setError(null);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`${apiBaseUrl}/api/candidates`, {
+      const response = await fetch(`${API_BASE_URL}/candidates`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
