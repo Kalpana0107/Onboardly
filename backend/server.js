@@ -13,7 +13,6 @@ const path = require('path');
 const candidateRoutes = require("./routes/candidates");
 const healthRoute = require("./routes/health");
 const matchRoute = require("./routes/match");
-const authRoutes = require("./routes/authRoutes");
 const hrRoutes = require("./routes/hrRoutes");
 const checklistRoutes = require("./routes/checklistRoutes");
 const chatRoutes = require("./routes/chatRoutes");
@@ -106,18 +105,3 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-console.log(process.env.MONGODB_URI);
-
-mongoose.connect(process.env.MONGODB_URI, {
-    serverSelectionTimeoutMS: 10000,
-})
-    .then(() => {
-        console.log("MongoDB Connected");
-
-        app.listen(PORT, () => {
-            console.log(`Server running on http://localhost:${PORT}`);
-        });
-    })
-    .catch((err) => {
-        console.error("MongoDB Connection Error:", err);
-    });
