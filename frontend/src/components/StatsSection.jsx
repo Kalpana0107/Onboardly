@@ -17,7 +17,7 @@ const StatsSection = () => {
             Built for <span className="text-gradient">Speed & Accuracy</span>
           </h2>
           <p className="section-subtitle">
-            SmartHire delivers fast, reliable resume screening so you can hire with confidence.
+            Onboardly delivers fast, reliable resume screening so you can hire with confidence.
           </p>
         </div>
 

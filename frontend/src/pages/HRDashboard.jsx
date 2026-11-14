@@ -18,7 +18,7 @@ const HRDashboard = () => {
   const [matchResult, setMatchResult] = useState(null);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col transition-colors duration-200">
       <Navbar />
 
       <div className="flex flex-1">
@@ -26,23 +26,27 @@ const HRDashboard = () => {
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {/* Dynamic Right Content Viewport */}
-        <main className="flex-1 p-8 overflow-y-auto max-w-6xl">
+        <main className="flex-1 p-6 md:p-8 overflow-y-auto max-w-6xl">
           {/* Tab 1: Upload Resume & Skill Extraction */}
           {activeTab === 'upload' && (
             <div className="space-y-6 animate-fadeIn">
               <div>
-                <h1 className="text-2xl font-bold text-white mb-1">Upload Resume</h1>
-                <p className="text-sm text-slate-400">
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-1">
+                  Upload Resume
+                </h1>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Upload PDF candidate resumes to extract technical skills automatically.
                 </p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-md">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none transition-all">
                   <FileUpload onSkillsExtracted={setExtractedSkills} />
                 </div>
-                <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-md">
-                  <h3 className="text-base font-semibold text-white mb-4">Extracted Skills</h3>
+                <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none transition-all">
+                  <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-4">
+                    Extracted Skills
+                  </h3>
                   <SkillBadges skills={extractedSkills} />
                 </div>
               </div>
@@ -53,18 +57,22 @@ const HRDashboard = () => {
           {activeTab === 'jd' && (
             <div className="space-y-6 animate-fadeIn">
               <div>
-                <h1 className="text-2xl font-bold text-white mb-1">Job Description Matching</h1>
-                <p className="text-sm text-slate-400">
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-1">
+                  Job Description Matching
+                </h1>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Paste role requirements to compare against candidate skills and calculate match scores.
                 </p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-md">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none transition-all">
                   <JDInputForm onMatchCalculated={setMatchResult} />
                 </div>
-                <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-md">
-                  <h3 className="text-base font-semibold text-white mb-4">Match Evaluation</h3>
+                <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none transition-all">
+                  <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-4">
+                    Match Evaluation
+                  </h3>
                   <ScoreCard matchResult={matchResult} />
                 </div>
               </div>
@@ -75,32 +83,35 @@ const HRDashboard = () => {
           {activeTab === 'candidates' && (
             <div className="space-y-6 animate-fadeIn">
               <div>
-                <h1 className="text-2xl font-bold text-white mb-1">Ranked Candidates</h1>
-                <p className="text-sm text-slate-400">
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-1">
+                  Ranked Candidates
+                </h1>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   View and manage evaluated candidate profiles ordered by job suitability.
                 </p>
               </div>
 
-              <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-md">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-6 shadow-sm dark:shadow-none transition-all">
                 <CandidateList />
               </div>
             </div>
           )}
 
-          {/* Tab 4: Manage Employees (Placeholder for Issue #8) */}
           {/* Tab 4: Manage Employees */}
-{activeTab === 'employees' && (
-  <div className="space-y-6 animate-fadeIn">
-    <div>
-      <h1 className="text-2xl font-bold text-white mb-1">Manage Employees</h1>
-      <p className="text-sm text-slate-400">
-        Provision new employee accounts for hired candidates to give them onboarding portal access.
-      </p>
-    </div>
+          {activeTab === 'employees' && (
+            <div className="space-y-6 animate-fadeIn">
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-1">
+                  Manage Employees
+                </h1>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Provision new employee accounts for hired candidates to give them onboarding portal access.
+                </p>
+              </div>
 
-    <EmployeeManager />
-  </div>
-)}
+              <EmployeeManager />
+            </div>
+          )}
         </main>
       </div>
     </div>

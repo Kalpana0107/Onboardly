@@ -43,8 +43,8 @@ export default function CompanyQA() {
   };
 
   return (
-    <div className="p-6 bg-slate-900 rounded-xl border border-slate-800 text-white space-y-6">
-      <h2 className="text-xl font-bold text-indigo-400">Company Policy & Q&A Search</h2>
+    <div className="space-y-6">
+      <h2 className="text-lg font-bold text-slate-900 dark:text-white">Company Policy & Q&A Search</h2>
       
       <form onSubmit={handleSearch} className="flex gap-3">
         <input
@@ -52,32 +52,32 @@ export default function CompanyQA() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Ask a policy question (e.g., What is our remote work or leave policy?)"
-          className="flex-1 px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all"
         />
         <button
           type="submit"
           disabled={loading || !query.trim()}
-          className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 rounded-lg text-sm font-semibold transition-all"
+          className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-xs md:text-sm font-semibold transition-all shadow-sm"
         >
           {loading ? <Spinner text="Searching..." /> : 'Search'}
         </button>
       </form>
 
       {error && (
-        <div className="p-3 bg-red-900/40 border border-red-500/50 rounded-lg text-red-300 text-sm">
+        <div className="p-3 bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-500/50 rounded-xl text-red-700 dark:text-red-300 text-xs">
           {error}
         </div>
       )}
 
       {response && (
-        <div className="p-4 bg-slate-800/60 rounded-lg border border-slate-700/60 space-y-4">
-          <p className="text-slate-200 text-sm leading-relaxed">{response.answer}</p>
+        <div className="p-5 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200/80 dark:border-slate-700/60 space-y-4">
+          <p className="text-slate-800 dark:text-slate-200 text-xs md:text-sm leading-relaxed">{response.answer}</p>
           
           {response.sources && response.sources.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-700/50">
-              <span className="text-xs text-slate-400 font-medium">Sources:</span>
+            <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-200/80 dark:border-slate-700/50">
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Sources:</span>
               {response.sources.map((src, idx) => (
-                <span key={idx} className="px-2 py-0.5 bg-indigo-950 text-indigo-300 border border-indigo-700/50 text-xs rounded-md">
+                <span key={idx} className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-700/50 text-xs rounded-lg font-medium">
                   📄 {src}
                 </span>
               ))}

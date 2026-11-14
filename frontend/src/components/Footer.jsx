@@ -8,15 +8,15 @@ const Footer = () => {
           {/* Brand */}
           <div className="footer-brand">
             <a className="navbar-logo" href="#top" style={{ marginBottom: '12px', display: 'inline-flex' }}>
-              <div className="logo-icon" style={{ width: '32px', height: '32px', fontSize: '14px' }}>SH</div>
-              <span className="logo-text" style={{ fontSize: '18px' }}>Smart<span>Hire</span></span>
+              <div className="logo-icon" style={{ width: '32px', height: '32px', fontSize: '14px' }}>OB</div>
+              <span className="logo-text" style={{ fontSize: '18px' }}>Onboard<span>ly</span></span>
             </a>
             <p className="footer-brand-desc">
               AI-powered resume screening system built with React, Node.js, and Python NLP. 
               Automate your hiring process and find the right candidates faster.
             </p>
             <div className="footer-social">
-              <a href="https://github.com/Kalpana3007/SmartHire" target="_blank" rel="noreferrer"
+              <a href="https://github.com/Kalpana0107/Onboardly" target="_blank" rel="noreferrer"
                 className="footer-social-link" title="GitHub">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
@@ -63,10 +63,10 @@ const Footer = () => {
           <div>
             <div className="footer-col-title">Resources</div>
             <div className="footer-links">
-              <a href="https://github.com/Kalpana3007/SmartHire" target="_blank" rel="noreferrer" className="footer-link">GitHub Repo</a>
-              <a href="https://github.com/Kalpana3007/SmartHire/blob/main/README.md" target="_blank" rel="noreferrer" className="footer-link">Documentation</a>
-              <a href="https://github.com/Kalpana3007/SmartHire/issues" target="_blank" rel="noreferrer" className="footer-link">Report Issue</a>
-              <a href="https://github.com/Kalpana3007/SmartHire/pulls" target="_blank" rel="noreferrer" className="footer-link">Contributing</a>
+              <a href="https://github.com/Kalpana0107/Onboardly" target="_blank" rel="noreferrer" className="footer-link">GitHub Repo</a>
+              <a href="https://github.com/Kalpana0107/Onboardly/blob/main/README.md" target="_blank" rel="noreferrer" className="footer-link">Documentation</a>
+              <a href="https://github.com/Kalpana0107/Onboardly/issues" target="_blank" rel="noreferrer" className="footer-link">Report Issue</a>
+              <a href="https://github.com/Kalpana0107/Onboardly/pulls" target="_blank" rel="noreferrer" className="footer-link">Contributing</a>
               <a href="#" className="footer-link">MIT License</a>
             </div>
           </div>
@@ -75,12 +75,12 @@ const Footer = () => {
         {/* Footer Bottom */}
         <div className="footer-bottom">
           <div className="footer-copyright">
-            © {year} <span>SmartHire</span>. Built with ❤️ using React, Node.js &amp; Python NLP.
+            © {year} <span>Onboardly</span>. Built with ❤️ using React, Node.js &amp; Python NLP.
           </div>
           <div className="footer-legal">
             <a href="#">Privacy</a>
             <a href="#">Terms</a>
-            <a href="https://github.com/Kalpana3007/SmartHire" target="_blank" rel="noreferrer">GitHub</a>
+            <a href="https://github.com/Kalpana0107/Onboardly" target="_blank" rel="noreferrer">GitHub</a>
           </div>
         </div>
       </div>

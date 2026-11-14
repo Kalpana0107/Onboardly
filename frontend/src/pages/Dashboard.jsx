@@ -54,7 +54,7 @@ function Dashboard() {
           fontSize: '20px', 
           fontWeight: '700' 
         }}>
-          SmartHire — Resume Screener
+          Onboardly — Resume Screener
         </h1>
         <button
           onClick={() => navigate('/')}

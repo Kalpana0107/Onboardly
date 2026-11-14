@@ -44,7 +44,7 @@ const TestimonialsSection = () => {
             Trusted by <span className="text-gradient">Hiring Teams</span>
           </h2>
           <p className="section-subtitle">
-            See how SmartHire is transforming the recruitment workflows of teams across industries.
+            See how Onboardly is transforming the recruitment workflows of teams across industries.
           </p>
         </div>
 
