@@ -29,7 +29,7 @@ const HowItWorks = () => {
             How It Works
           </div>
           <h2 className="section-title">
-            How <span className="text-gradient">SmartHire</span> Works
+            How <span className="text-gradient">Onboardly</span> Works
           </h2>
           <p className="section-subtitle">
             Three simple steps to find the best candidates for your role — 

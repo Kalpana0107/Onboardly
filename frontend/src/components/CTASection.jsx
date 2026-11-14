@@ -17,7 +17,7 @@ const CTASection = () => {
             <span className="text-gradient">Your Hiring Process?</span>
           </h2>
           <p className="cta-subtitle">
-            SmartHire is open source and free to use. Deploy it on your infrastructure, 
+            Onboardly is open source and free to use. Deploy it on your infrastructure, 
             contribute to the project, or simply start screening resumes smarter today.
           </p>
           <div className="cta-actions">
@@ -25,7 +25,7 @@ const CTASection = () => {
               🚀 Try It Now
             </button>
             <a
-              href="https://github.com/Kalpana3007/SmartHire"
+              href="https://github.com/Kalpana0107/Onboardly"
               target="_blank"
               rel="noreferrer"
               className="btn btn-ghost btn-xl"

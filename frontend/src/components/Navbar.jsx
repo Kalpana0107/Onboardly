@@ -29,7 +29,7 @@ const Navbar = () => {
                 S
               </div>
               <span className="font-bold text-xl tracking-tight text-white">
-                Smart<span className="text-indigo-400">Hire</span>
+                Onboard<span className="text-indigo-400">ly</span>
               </span>
             </Link>
           </div>

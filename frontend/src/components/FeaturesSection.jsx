@@ -51,7 +51,7 @@ const FeaturesSection = () => {
             <span className="text-gradient">Hire Smarter</span>
           </h2>
           <p className="section-subtitle">
-            From automated resume screening to intelligent candidate ranking — SmartHire
+            From automated resume screening to intelligent candidate ranking — Onboardly
             handles the heavy lifting so your team can focus on hiring decisions.
           </p>
         </div>
