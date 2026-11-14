@@ -70,7 +70,7 @@ const Login = () => {
             O
           </div>
         </div>
-        <h2 className="mt-5 text-center text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
           Sign in to Onboardly
         </h2>
         <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-400">

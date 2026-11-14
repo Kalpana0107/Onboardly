@@ -29,8 +29,8 @@ const Navbar = () => {
               <div className="w-8 h-8 bg-gradient-to-tr from-indigo-600 to-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-lg shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
                 O
               </div>
-              <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">
-                Onboard<span className="text-indigo-600 dark:text-indigo-400">ly</span>
+              <span className="font-bold text-xl tracking-tight text-white">
+                Onboard<span className="text-indigo-400">ly</span>
               </span>
             </Link>
           </div>
