@@ -1,4 +1,4 @@
-# SmartHire
+# Onboardly
 
 # 📄 AI-Powered Resume Screening System
 
@@ -87,8 +87,7 @@ The system extracts information from uploaded resumes, analyzes skills using Nat
 
 | Technology | Purpose |
 |------------|----------|
-| SQLite | Local Development |
-| PostgreSQL | Production Database |
+| SQLite | Local Development | | Production Database |
 
 ### Deployment
 
@@ -127,7 +126,7 @@ The system extracts information from uploaded resumes, analyzes skills using Nat
           ▼
 ┌──────────────────────┐
 │ Candidate Database   │
-│ SQLite/PostgreSQL    │
+│ SQLite │
 └──────────────────────┘
 ```
 
@@ -305,6 +304,6 @@ If you found this project useful, consider giving it a ⭐ on GitHub.
 
 ---
 
-### Built with ❤️ using React, Node.js, Python NLP, and PostgreSQL.
+### Built with ❤️ using React, Node.js, Python NLP, and SQlite.
 
 

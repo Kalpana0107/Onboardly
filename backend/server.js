@@ -1,6 +1,10 @@
+const dns = require('dns');
+dns.setServers(['8.8.8.8', '8.8.4.4']);
+
+
 const uploadRoutes = require("./routes/upload");
 const extractRoutes = require("./routes/extract");
-
+const authRoutes = require("./routes/authRoutes");
 const express = require("express");
 const cors = require("cors");
 const fs = require('fs');
@@ -9,7 +13,6 @@ const path = require('path');
 const candidateRoutes = require("./routes/candidates");
 const healthRoute = require("./routes/health");
 const matchRoute = require("./routes/match");
-const authRoutes = require("./routes/authRoutes");
 const hrRoutes = require("./routes/hrRoutes");
 const checklistRoutes = require("./routes/checklistRoutes");
 const chatRoutes = require("./routes/chatRoutes");
@@ -69,6 +72,7 @@ app.use("/api", healthRoute);
 app.use("/api", uploadRoutes);
 app.use("/api", extractRoutes);
 app.use("/api", candidateRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api", matchRoute);
 app.use("/api", authRoutes);
 app.use("/api", hrRoutes);
