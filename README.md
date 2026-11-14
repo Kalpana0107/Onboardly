@@ -304,6 +304,6 @@ If you found this project useful, consider giving it a ⭐ on GitHub.
 
 ---
 
-### Built with ❤️ using React, Node.js, Python NLP, and PostgreSQL.
+### Built with ❤️ using React, Node.js, Python NLP, and SQlite.
 
 
