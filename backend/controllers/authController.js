@@ -122,4 +122,62 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login };
+/**
+ * POST /api/auth/google-sync
+ * Body: { email, name, fullName, role? }
+ * Finds or creates user for Google OAuth, returns valid JWT and user object.
+ */
+const googleSync = async (req, res) => {
+  try {
+    const { email, name, fullName, role } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required for Google authentication.' });
+    }
+
+    const displayName = fullName || name || email.split('@')[0] || 'User';
+    const userRole = role === 'hr' ? 'hr' : 'employee';
+
+    let user = User.findByEmail(email);
+
+    if (!user) {
+      const randomPassword = await bcrypt.hash(Math.random().toString(36) + Date.now(), 10);
+      user = User.create({
+        fullName: displayName,
+        email,
+        password: randomPassword,
+        role: userRole,
+      });
+
+      if (userRole === 'employee') {
+        try {
+          db.prepare('INSERT OR IGNORE INTO employees_info (userId, department, progress, completionEmailSent) VALUES (?, ?, 0, 0)')
+            .run(user.id, 'Engineering');
+        } catch (e) {
+          // Ignored if table creation is deferred
+        }
+      }
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, role: user.role },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN }
+    );
+
+    return res.status(200).json({
+      token,
+      user: {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    console.error('Google sync error:', err);
+    return res.status(500).json({ error: 'Google sign-in sync failed.' });
+  }
+};
+
+module.exports = { register, login, googleSync };

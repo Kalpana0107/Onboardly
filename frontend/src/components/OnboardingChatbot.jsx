@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { API_BASE_URL } from '../api/config';
 
 const OnboardingChatbot = () => {
   const [messages, setMessages] = useState([
@@ -12,7 +13,7 @@ const OnboardingChatbot = () => {
   const [loading, setLoading] = useState(false);
   const chatBottomRef = useRef(null);
 
-    useEffect(() => {
+  useEffect(() => {
     chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
@@ -66,19 +67,22 @@ const OnboardingChatbot = () => {
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl flex flex-col h-[500px] shadow-md overflow-hidden">
+    <div className="bg-slate-50/60 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 rounded-xl flex flex-col h-full shadow-inner overflow-hidden">
       {/* Chat Header */}
-      <div className="p-4 bg-slate-800/80 border-b border-slate-800 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600/20 text-indigo-400 flex items-center justify-center font-bold text-sm">
+      <div className="p-3.5 bg-white dark:bg-slate-800/80 border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
+        <div className="flex items-center space-x-2.5">
+          <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-sm border border-indigo-100 dark:border-indigo-500/20">
             🤖
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-white">Gemini AI Assistant</h3>
-            <p className="text-[11px] text-slate-400">Ask questions about company onboarding</p>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Gemini AI Assistant</h3>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">Ask questions about company onboarding</p>
           </div>
         </div>
-        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/40">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="text-[11px] font-medium text-emerald-700 dark:text-emerald-400">Active</span>
+        </div>
       </div>
 
       {/* Message History Viewport */}
@@ -89,10 +93,10 @@ const OnboardingChatbot = () => {
             className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w-[80%] rounded-xl px-4 py-2.5 text-xs md:text-sm leading-relaxed ${
+              className={`max-w-[80%] px-4 py-2.5 text-xs md:text-sm leading-relaxed transition-all ${
                 msg.sender === 'user'
-                  ? 'bg-indigo-600 text-white rounded-br-none'
-                  : 'bg-slate-800 text-slate-200 border border-slate-700/70 rounded-bl-none'
+                  ? 'bg-indigo-600 text-white rounded-2xl rounded-br-none shadow-sm'
+                  : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/70 rounded-2xl rounded-bl-none shadow-xs'
               }`}
             >
               {msg.text}
@@ -102,10 +106,10 @@ const OnboardingChatbot = () => {
 
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-slate-800 border border-slate-700/70 rounded-xl rounded-bl-none px-4 py-3 text-xs text-slate-400 flex items-center space-x-2">
-              <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce"></span>
-              <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce delay-100"></span>
-              <span className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce delay-200"></span>
+            <div className="bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/70 rounded-2xl rounded-bl-none px-4 py-3 text-xs text-slate-500 dark:text-slate-400 flex items-center space-x-2 shadow-xs">
+              <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce"></span>
+              <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce delay-100"></span>
+              <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce delay-200"></span>
             </div>
           </div>
         )}
@@ -113,18 +117,18 @@ const OnboardingChatbot = () => {
       </div>
 
       {/* Input Box */}
-      <form onSubmit={handleSend} className="p-3 bg-slate-800/40 border-t border-slate-800 flex gap-2">
+      <form onSubmit={handleSend} className="p-3 bg-white dark:bg-slate-800/40 border-t border-slate-200/80 dark:border-slate-800 flex gap-2">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask a question about onboarding..."
-          className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all"
         />
         <button
           type="submit"
           disabled={loading || !input.trim()}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition-colors disabled:opacity-50"
         >
           Send
         </button>

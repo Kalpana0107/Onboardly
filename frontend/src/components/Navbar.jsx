@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ThemeToggle from './Common/ThemeToggle';
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -19,14 +20,14 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-50">
+    <nav className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 text-slate-800 dark:text-white sticky top-0 z-50 transition-colors duration-200 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-white text-lg shadow-md">
-                S
+            <Link to="/" className="flex items-center space-x-2.5 group">
+              <div className="w-8 h-8 bg-gradient-to-tr from-indigo-600 to-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-lg shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+                O
               </div>
               <span className="font-bold text-xl tracking-tight text-white">
                 Onboard<span className="text-indigo-400">ly</span>
@@ -35,16 +36,16 @@ const Navbar = () => {
           </div>
 
           {/* Clean Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             <a
               href="#features"
-              className="text-slate-300 hover:text-white text-sm font-medium transition-colors"
+              className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-white text-sm font-medium transition-colors"
             >
               Features
             </a>
             <a
               href="#how-it-works"
-              className="text-slate-300 hover:text-white text-sm font-medium transition-colors"
+              className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-white text-sm font-medium transition-colors"
             >
               How It Works
             </a>
@@ -52,7 +53,7 @@ const Navbar = () => {
               href="https://github.com/Kalpana0107/Onboardly"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-slate-300 hover:text-white text-sm font-medium transition-colors flex items-center gap-1"
+              className="text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-white text-sm font-medium transition-colors flex items-center gap-1"
             >
               GitHub
               <svg
@@ -71,19 +72,21 @@ const Navbar = () => {
             </a>
           </div>
 
-          {/* Auth Call-to-Action Buttons */}
-          <div className="flex items-center space-x-4">
+          {/* Right Action Container: Theme Toggle & Auth Buttons */}
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            <ThemeToggle />
+
             {isAuthenticated ? (
               <div className="flex items-center space-x-3">
                 <button
                   onClick={handleDashboardRedirect}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-md shadow-indigo-600/20"
                 >
                   Dashboard
                 </button>
                 <button
                   onClick={logout}
-                  className="text-slate-400 hover:text-white text-sm font-medium transition-colors"
+                  className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-sm font-medium transition-colors"
                 >
                   Log out
                 </button>
@@ -92,13 +95,13 @@ const Navbar = () => {
               <div className="flex items-center space-x-3">
                 <Link
                   to="/login"
-                  className="text-slate-300 hover:text-white text-sm font-medium transition-colors"
+                  className="text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-white text-sm font-medium transition-colors"
                 >
                   Log in
                 </Link>
                 <Link
                   to="/register"
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-md shadow-indigo-600/20"
                 >
                   Get Started
                 </Link>
