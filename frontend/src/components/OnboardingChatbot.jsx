@@ -5,7 +5,7 @@ const OnboardingChatbot = () => {
     {
       id: 1,
       sender: 'ai',
-      text: "Hi! I'm your SmartHire AI Onboarding Guide powered by Gemini. Ask me anything about your onboarding tasks, company policies, or IT setup!",
+      text: "Hi! I'm your Onboardly AI Onboarding Guide powered by Gemini. Ask me anything about your onboarding tasks, company policies, or IT setup!",
     },
   ]);
   const [input, setInput] = useState('');

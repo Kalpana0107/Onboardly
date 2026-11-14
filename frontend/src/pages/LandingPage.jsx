@@ -21,7 +21,7 @@ const LandingPage = () => {
       {/* Hero Section */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-8">
-          <span>🚀 SmartHire 2.0 Released</span>
+          <span>🚀 Onboardly 2.0 Released</span>
         </div>
         <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6">
           AI-Powered Recruitment & <br />
@@ -89,7 +89,7 @@ const LandingPage = () => {
 
       {/* How It Works Section */}
       <section id="how-it-works" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-bold text-center text-white mb-8">How SmartHire Works</h2>
+        <h2 className="text-2xl font-bold text-center text-white mb-8">How Onboardly Works</h2>
         <div className="flex flex-col md:flex-row gap-6 justify-between text-slate-300 text-sm">
           <div className="flex-1 p-4 bg-slate-800 rounded-lg border border-slate-700">
             <strong className="text-white block mb-1">Step 1: Upload & Extract</strong>
@@ -111,7 +111,7 @@ const LandingPage = () => {
         <div className="max-w-4xl mx-auto space-y-4">
           <h2 className="text-2xl font-bold text-white">Ready to streamline your recruitment process?</h2>
           <p className="text-sm text-slate-300 max-w-xl mx-auto">
-            Join SmartHire today to experience AI-powered matching and candidate onboarding.
+            Join Onboardly today to experience AI-powered matching and candidate onboarding.
           </p>
           <div className="pt-2">
             <button
