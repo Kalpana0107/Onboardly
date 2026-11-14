@@ -95,10 +95,10 @@ const CandidateList = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search candidate by name or email..."
-            className="w-full pl-10 pr-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all"
           />
           <svg
-            className="w-4 h-4 text-slate-400 absolute left-3 top-3"
+            className="w-4 h-4 text-slate-400 absolute left-3.5 top-3"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -118,7 +118,7 @@ const CandidateList = () => {
               setSearchQuery('');
               setSelectedSkills([]);
             }}
-            className="text-xs text-indigo-400 hover:text-indigo-300 font-medium transition-colors self-end md:self-auto"
+            className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition-colors self-end md:self-auto"
           >
             Clear Filters ({filteredCandidates.length} results)
           </button>
@@ -127,8 +127,8 @@ const CandidateList = () => {
 
       {/* Dynamic Skill Filter Badges/Checkboxes */}
       {availableSkills.length > 0 && (
-        <div className="bg-slate-800/60 p-4 rounded-lg border border-slate-700/60">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
+        <div className="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/60">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
             Filter by Extracted Skills
           </h4>
           <div className="flex flex-wrap gap-2">
@@ -139,10 +139,10 @@ const CandidateList = () => {
                   key={skill}
                   type="button"
                   onClick={() => handleSkillToggle(skill)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors flex items-center gap-1.5 ${
+                  className={`px-3 py-1 rounded-full text-xs font-medium border transition-all flex items-center gap-1.5 ${
                     isChecked
-                      ? 'bg-indigo-600 border-indigo-500 text-white'
-                      : 'bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-600'
+                      ? 'bg-indigo-600 border-indigo-600 text-white shadow-xs'
+                      : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'
                   }`}
                 >
                   <span>{skill}</span>
@@ -156,17 +156,17 @@ const CandidateList = () => {
 
       {/* Loading & Error Indicators */}
       {loading && (
-        <div className="text-center py-12 text-slate-400 text-sm">
+        <div className="text-center py-12 text-slate-500 dark:text-slate-400 text-sm">
           Loading candidate rankings...
         </div>
       )}
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500 text-red-400 text-sm p-4 rounded-lg flex justify-between items-center">
+        <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500 text-red-700 dark:text-red-400 text-sm p-4 rounded-xl flex justify-between items-center">
           <span>{error}</span>
           <button
             onClick={fetchCandidates}
-            className="underline text-xs hover:text-red-300"
+            className="underline text-xs hover:text-red-600 dark:hover:text-red-300"
           >
             Retry
           </button>
@@ -177,24 +177,24 @@ const CandidateList = () => {
       {!loading && !error && (
         <div className="space-y-3">
           {filteredCandidates.length === 0 ? (
-            <div className="text-center py-12 bg-slate-800/30 rounded-lg border border-dashed border-slate-700 text-slate-400 text-sm">
+            <div className="text-center py-12 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-sm">
               No candidates found matching your search or skill criteria.
             </div>
           ) : (
             filteredCandidates.map((candidate, index) => (
               <div
                 key={candidate._id || index}
-                className="bg-slate-800/90 border border-slate-700/80 rounded-lg p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-indigo-500/50 transition-colors"
+                className="bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-indigo-400 dark:hover:border-indigo-500/50 shadow-xs hover:shadow-sm transition-all"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-9 h-9 rounded-full bg-slate-700 text-indigo-400 flex items-center justify-center font-bold text-sm shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-indigo-50 dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-transparent flex items-center justify-center font-bold text-sm shrink-0">
                     #{index + 1}
                   </div>
                   <div>
-                    <h3 className="text-base font-semibold text-white">
+                    <h3 className="text-base font-semibold text-slate-900 dark:text-white">
                       {candidate.name || 'Unnamed Candidate'}
                     </h3>
-                    <p className="text-xs text-slate-400">{candidate.email || 'No email provided'}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{candidate.email || 'No email provided'}</p>
 
                     {/* Skill Badges */}
                     {candidate.skills && candidate.skills.length > 0 && (
@@ -202,7 +202,7 @@ const CandidateList = () => {
                         {candidate.skills.map((s, i) => (
                           <span
                             key={i}
-                            className="bg-slate-700 text-slate-300 px-2 py-0.5 rounded text-[11px]"
+                            className="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200/60 dark:border-transparent px-2.5 py-0.5 rounded-full text-[11px] font-medium"
                           >
                             {s}
                           </span>
@@ -213,10 +213,10 @@ const CandidateList = () => {
                 </div>
 
                 {/* Score & Resume Link */}
-                <div className="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 pt-3 md:pt-0 border-slate-700">
+                <div className="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 pt-3 md:pt-0 border-slate-100 dark:border-slate-700">
                   <div className="text-right">
-                    <span className="text-xs text-slate-400 block">Match Score</span>
-                    <span className="text-lg font-bold text-indigo-400">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 block">Match Score</span>
+                    <span className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
                       {candidate.matchScore ?? 0}%
                     </span>
                   </div>
@@ -226,7 +226,7 @@ const CandidateList = () => {
                       href={candidate.resumeUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-white rounded text-xs font-medium transition-colors"
+                      className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white rounded-lg text-xs font-medium transition-colors"
                     >
                       View Resume
                     </a>

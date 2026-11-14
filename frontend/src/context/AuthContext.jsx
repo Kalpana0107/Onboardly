@@ -14,7 +14,96 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || null);
+  
+  // Keep loading true initially if there is an OAuth callback in the URL to prevent premature redirect
+  const hasOAuthCallback = typeof window !== 'undefined' && (
+    window.location.hash.includes('access_token') ||
+    window.location.search.includes('code=')
+  );
   const [loading, setLoading] = useState(true);
+
+  // Helper to sync Google user with backend or local fallback
+  const syncGoogleUser = async (supaUser, sessionAccessToken) => {
+    const fullName = supaUser.user_metadata?.full_name || supaUser.user_metadata?.name || supaUser.email?.split('@')[0] || 'User';
+    const email = supaUser.email;
+    const fallbackUser = {
+      id: supaUser.id,
+      fullName,
+      email,
+      role: 'employee',
+    };
+    const fallbackToken = sessionAccessToken || supaUser.id;
+
+    try {
+      // 1. Try dedicated Google OAuth sync endpoint
+      const syncRes = await fetch(`${API_BASE_URL}/auth/google-sync`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          fullName,
+          role: 'employee'
+        })
+      });
+
+      if (syncRes.ok) {
+        const data = await syncRes.json();
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setToken(data.token);
+        setUser(data.user);
+        return data.user;
+      }
+
+      // 2. Fallback to register / login if syncRes fails
+      const registerRes = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: fullName,
+          email,
+          password: supaUser.id,
+          role: 'employee',
+        }),
+      });
+
+      if (registerRes.ok) {
+        const data = await registerRes.json();
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setToken(data.token);
+        setUser(data.user);
+        return data.user;
+      }
+
+      const loginRes = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          password: supaUser.id,
+        }),
+      });
+
+      if (loginRes.ok) {
+        const data = await loginRes.json();
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setToken(data.token);
+        setUser(data.user);
+        return data.user;
+      }
+    } catch (err) {
+      console.warn('Backend sync failed, using authenticated Supabase session:', err);
+    }
+
+    // 3. Resilient fallback: activate session with Supabase data so user is not stuck
+    localStorage.setItem('token', fallbackToken);
+    localStorage.setItem('user', JSON.stringify(fallbackUser));
+    setToken(fallbackToken);
+    setUser(fallbackUser);
+    return fallbackUser;
+  };
 
   useEffect(() => {
     // Synchronize stored user state on initial load
@@ -30,60 +119,39 @@ export const AuthProvider = ({ children }) => {
         logout();
       }
     }
-    setLoading(false);
 
-    // Listen for Supabase auth state changes (Google OAuth callback)
+    if (!hasOAuthCallback) {
+      setLoading(false);
+    }
+
+    // Check existing Supabase session or listen for auth state changes
     if (supabase) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user && !storedToken) {
+          syncGoogleUser(session.user, session.access_token).finally(() => setLoading(false));
+        } else if (hasOAuthCallback && !session) {
+          setLoading(false);
+        }
+      }).catch(() => setLoading(false));
+
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event, session) => {
-          if (event === 'SIGNED_IN' && session?.user) {
-            const supaUser = session.user;
+          if ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && session?.user) {
             try {
-              // Try to register the Google user with our backend
-              // If they already exist, fall back to login
-              const registerRes = await fetch(`${API_BASE_URL}/auth/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  name: supaUser.user_metadata?.full_name || supaUser.email?.split('@')[0] || 'User',
-                  email: supaUser.email,
-                  password: supaUser.id, // Use Supabase UID as password for OAuth users
-                  role: 'employee',
-                }),
-              });
-
-              let data;
-              if (registerRes.ok) {
-                data = await registerRes.json();
-              } else {
-                // User likely already exists, try login
-                const loginRes = await fetch(`${API_BASE_URL}/auth/login`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    email: supaUser.email,
-                    password: supaUser.id,
-                  }),
-                });
-                if (!loginRes.ok) {
-                  console.error('Google auth: backend sync failed');
-                  return;
-                }
-                data = await loginRes.json();
-              }
-
-              localStorage.setItem('token', data.token);
-              localStorage.setItem('user', JSON.stringify(data.user));
-              setToken(data.token);
-              setUser(data.user);
-            } catch (err) {
-              console.error('Error syncing Google user with backend:', err);
+              await syncGoogleUser(session.user, session.access_token);
+            } finally {
+              setLoading(false);
             }
+          } else if (event === 'SIGNED_OUT') {
+            logout();
+            setLoading(false);
           }
         }
       );
 
       return () => subscription?.unsubscribe();
+    } else {
+      setLoading(false);
     }
   }, []);
 
@@ -148,10 +216,13 @@ export const AuthProvider = ({ children }) => {
       throw new Error('Supabase client is not configured in environment variables.');
     }
 
+    // Always redirect back to current origin login
+    const redirectTo = `${window.location.origin}/login`;
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/login`,
+        redirectTo,
       },
     });
 
@@ -163,6 +234,9 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
     setToken(null);
     setUser(null);
+    if (supabase) {
+      supabase.auth.signOut().catch(() => {});
+    }
   };
 
   return (
